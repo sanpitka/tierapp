@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 
 public class StartWindow implements Runnable {
 
@@ -60,33 +61,30 @@ public class StartWindow implements Runnable {
     }
 
     private Component setNorthPanel() {
-        JPanel northPanel = new JPanel(new GridBagLayout());
-        northPanel.setPreferredSize(new Dimension(800, 80));
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.ipadx = 100;
-        c.ipady = 80;
+        JPanel northPanel = new JPanel(new GridLayout());
+        JPanel northPanelLeft = new JPanel(new GridLayout());
+        JPanel northPanelRight = new JPanel(new GridLayout());
 
-        northPanel.add(setButton("Menu", Color.BLACK), c);
-
+        northPanelLeft.add(setButton("Menu", Color.BLACK));
         Color buttonPink = new Color(255, 196, 242);
-        c.gridx = 1;
-        northPanel.add(setButton("GO RANK!", buttonPink), c);
+        northPanelLeft.add(setButton("Go Rank!", buttonPink));
 
-        /*
+        northPanel.add(northPanelLeft);
+
         JTextField listName = new JTextField("Unnamed tier list...");
-        listName.setPreferredSize(new Dimension(200, 70));
-        Font listNameFont=new Font(listName.getFont().getName(),listName.getFont().getStyle(),16);
+        Font listNameFont=new Font(listName.getFont().getName(),listName.getFont().getStyle(),20);
         listName.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
         listName.setFont(listNameFont);
         northPanel.add(listName);
 
-        northPanel.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK));
-
+        northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK));
+        
         ImageIcon breakfast = new ImageIcon("Breakfast1.png");
         JButton imgButton = new JButton(breakfast);
-        northPanel.add(imgButton);*/
+        imgButton.setBackground(Color.BLACK);
+        northPanelRight.add(imgButton);
+
+        northPanel.add(northPanelRight);
         
         return northPanel;
     }
