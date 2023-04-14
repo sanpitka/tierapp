@@ -5,19 +5,20 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicBorders.ButtonBorder;
 
 public class StartWindow implements Runnable {
 
     @Override
     public void run() {
         JFrame window = new JFrame();
+        Image logo = Toolkit.getDefaultToolkit().getImage("Logo.png");
 
+        window.setIconImage(logo);
         window.setTitle("Tier List Maker");
         window.setSize(800, 600);
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -25,16 +26,20 @@ public class StartWindow implements Runnable {
         window.setVisible(true);
 
         window.setLayout(new BorderLayout());
+        
 
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(), BorderLayout.WEST);
+        window.add(setRows(), BorderLayout.CENTER);
     }
 
     private Component setWestPanel() {
 
         JPanel westPanel = new JPanel();
-        westPanel.setPreferredSize(new Dimension(100, 600));
+        westPanel.setPreferredSize(new Dimension(130,600));
         westPanel.setLayout(new GridLayout(7,1));
+        westPanel.setBackground(new Color(184, 184, 184));
+        
 
         Color labelRed = new Color(220,40,40);
         westPanel.add(createNewLabel("S", labelRed));
@@ -79,15 +84,38 @@ public class StartWindow implements Runnable {
 
         northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK));
         
+        //TODO: Change the image icon according to the user's choice
         ImageIcon breakfast = new ImageIcon("Breakfast1.png");
         JButton imgButton = new JButton(breakfast);
-        imgButton.setBackground(Color.BLACK);
+        imgButton.setBorderPainted(false);
+        imgButton.setBackground(new Color(217, 217, 217));
         northPanelRight.add(imgButton);
 
         northPanel.add(northPanelRight);
         
         return northPanel;
     }
+
+    private Component setRows() {
+        JPanel rows = new JPanel();
+        rows.setPreferredSize(new Dimension(570, 600));
+        rows.setLayout(new GridLayout(7,1));
+        rows.setBackground(new Color(184, 184, 184));
+
+        Color lightGray = new Color(217, 217, 217);
+        Color darkGray = new Color(184, 184, 184);
+
+        int rowCounter = 7;
+        for (int i=0; i<rowCounter; i++) {
+            JPanel newPanel = new JPanel();
+            newPanel.setBackground(i % 2 == 0 ? lightGray : darkGray);
+            
+            rows.add(newPanel);
+        }
+
+        return rows;
+    }
+
 
     private JPanel createNewLabel(String label, Color backgroundColor) {
         JPanel newPanel = new JPanel();
@@ -106,9 +134,11 @@ public class StartWindow implements Runnable {
         JButton newButton = new JButton(buttonText);
         newButton.setFont(new Font("Arial", Font.PLAIN, 20));
         newButton.setBackground(buttonColor);
+        newButton.setBorderPainted(false);
         if (buttonColor == Color.BLACK) {
             newButton.setForeground(Color.WHITE);
         }
+        newButton.setFocusPainted(false);
         return newButton;
     }
     
