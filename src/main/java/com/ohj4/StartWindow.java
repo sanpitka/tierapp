@@ -8,9 +8,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.*;
 
 public class StartWindow implements Runnable {
@@ -29,12 +26,14 @@ public class StartWindow implements Runnable {
 
         window.setLayout(new BorderLayout());
         
-
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
     }
 
+    /**
+     * Sets the left-side column, where the rank letters are
+     */
     private Component setWestPanel() {
 
         JPanel westPanel = new JPanel();
@@ -67,14 +66,20 @@ public class StartWindow implements Runnable {
         return westPanel;
     }
 
+    /**
+     * Sets the top row of buttons and fields
+     */
     private Component setNorthPanel() {
         JPanel northPanel = new JPanel(new GridLayout());
         JPanel northPanelLeft = new JPanel(new GridLayout());
         JPanel northPanelRight = new JPanel(new GridLayout());
-
-        northPanelLeft.add(setButton("Menu", Color.BLACK, "menu"));
         Color buttonPink = new Color(255, 196, 242);
-        northPanelLeft.add(setButton("Go Rank!", buttonPink, "rank"));
+
+        JButton menubutton = new MyButtons().setNorthButton("Menu", Color.BLACK, "menu");
+        northPanelLeft.add(menubutton);
+        
+        JButton gorankbutton = new MyButtons().setNorthButton("Go Rank!", buttonPink, "rank");
+        northPanelLeft.add(gorankbutton);
 
         northPanel.add(northPanelLeft);
 
@@ -84,7 +89,8 @@ public class StartWindow implements Runnable {
         listName.setFont(listNameFont);
         northPanel.add(listName);
 
-        northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot"));
+        JButton screenshotbutton = new MyButtons().setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
+        northPanelRight.add(screenshotbutton);
         
         //TODO: Change the image icon according to the user's choice
         ImageIcon breakfast = new ImageIcon("Breakfast1.png");
@@ -98,6 +104,9 @@ public class StartWindow implements Runnable {
         return northPanel;
     }
 
+    /**
+     * Sets the rows in the screen, where the ranked pictures go
+     */
     private Component setRows() {
         JPanel rows = new JPanel();
         rows.setPreferredSize(new Dimension(570, 600));
@@ -119,6 +128,9 @@ public class StartWindow implements Runnable {
     }
 
 
+    /**
+     * Sets the ranking labels in the left-most panel
+     */
     private JPanel createNewLabel(String label, Color backgroundColor) {
         JPanel newPanel = new JPanel();
         JLabel newLabel = new JLabel(label, SwingConstants.CENTER);
@@ -129,43 +141,6 @@ public class StartWindow implements Runnable {
         newPanel.add(newLabel);
         newPanel.setBackground(backgroundColor);
         return newPanel;
-    }
-
-
-    private JButton setButton(String buttonText, Color buttonColor, String buttonAction) {
-        JButton newButton = new JButton(buttonText);
-        newButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        newButton.setBackground(buttonColor);
-        newButton.setBorderPainted(false);
-        newButton.setActionCommand(buttonAction);
-        if (buttonColor == Color.BLACK) {
-            newButton.setForeground(Color.WHITE);
-        }
-        newButton.setFocusPainted(false);
-        newButton.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                
-                // TODO add button actions here
-                String command = e.getActionCommand();
-                if (command == "menu") {
-                    // menu button pressed
-                    System.out.println(buttonAction + " pressed.");
-                } else if (command == "rank") {
-                    // 'go rank' pressed
-                    System.out.println(buttonAction + " pressed.");
-                } else if (command == "screenshot") {
-                    // 'go rank' pressed
-                    System.out.println(buttonAction + " pressed.");
-                } else {
-                    throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-                }                
-            }
-            
-        });
-
-        return newButton;
-    }
+    }    
     
 }
