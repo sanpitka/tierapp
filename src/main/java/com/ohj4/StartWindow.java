@@ -1,16 +1,13 @@
 package com.ohj4;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
 public class StartWindow implements Runnable {
@@ -87,11 +84,9 @@ public class StartWindow implements Runnable {
         northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot"));
         
         //TODO: Change the image icon according to the user's choice
-        ImageIcon breakfast = new ImageIcon("Breakfast1.png");
-        JButton imgButton = new JButton(breakfast);
-        imgButton.setBorderPainted(false);
-        imgButton.setBackground(new Color(217, 217, 217));
-        northPanelRight.add(imgButton);
+        ImageIcon category = new ImageIcon("Breakfast1.png");
+        JLabel categoryLabel = new JLabel(category);
+        northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
         
@@ -156,8 +151,17 @@ public class StartWindow implements Runnable {
                     // 'go rank' pressed
                     System.out.println(buttonAction + " pressed.");
                 } else if (command == "screenshot") {
-                    // 'go rank' pressed
+                    // 'screenshot' pressed
                     System.out.println(buttonAction + " pressed.");
+                    BufferedImage image;
+                    try {
+                        image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+                        ImageIO.write(image, "png", new File("C:/Users/sanpi/Lipasto/Ohjelmointi 4/tierapp/screenshot.png"));
+                        //TODO: Fix the path and take screenshot only from the application, not the whole screen
+                    } catch (Exception e1) {
+                        // TODO Auto-generated catch block
+                        e1.printStackTrace();
+                    }
                 } else {
                     throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
                 }                
