@@ -8,6 +8,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
@@ -70,19 +72,19 @@ public class StartWindow implements Runnable {
         JPanel northPanelLeft = new JPanel(new GridLayout());
         JPanel northPanelRight = new JPanel(new GridLayout());
 
-        northPanelLeft.add(setButton("Menu", Color.BLACK));
+        northPanelLeft.add(setButton("Menu", Color.BLACK, "menu"));
         Color buttonPink = new Color(255, 196, 242);
-        northPanelLeft.add(setButton("Go Rank!", buttonPink));
+        northPanelLeft.add(setButton("Go Rank!", buttonPink, "rank"));
 
         northPanel.add(northPanelLeft);
 
         JTextField listName = new JTextField("Unnamed tier list...");
-        Font listNameFont=new Font(listName.getFont().getName(),listName.getFont().getStyle(),20);
+        Font listNameFont = new Font(listName.getFont().getName(),listName.getFont().getStyle(),20);
         listName.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
         listName.setFont(listNameFont);
         northPanel.add(listName);
 
-        northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK));
+        northPanelRight.add(setButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot"));
         
         //TODO: Change the image icon according to the user's choice
         ImageIcon breakfast = new ImageIcon("Breakfast1.png");
@@ -130,15 +132,39 @@ public class StartWindow implements Runnable {
     }
 
 
-    private JButton setButton(String buttonText, Color buttonColor) {
+    private JButton setButton(String buttonText, Color buttonColor, String buttonAction) {
         JButton newButton = new JButton(buttonText);
         newButton.setFont(new Font("Arial", Font.PLAIN, 20));
         newButton.setBackground(buttonColor);
         newButton.setBorderPainted(false);
+        newButton.setActionCommand(buttonAction);
         if (buttonColor == Color.BLACK) {
             newButton.setForeground(Color.WHITE);
         }
         newButton.setFocusPainted(false);
+        newButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                // TODO add button actions here
+                String command = e.getActionCommand();
+                if (command == "menu") {
+                    // menu button pressed
+                    System.out.println(buttonAction + " pressed.");
+                } else if (command == "rank") {
+                    // 'go rank' pressed
+                    System.out.println(buttonAction + " pressed.");
+                } else if (command == "screenshot") {
+                    // 'go rank' pressed
+                    System.out.println(buttonAction + " pressed.");
+                } else {
+                    throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
+                }                
+            }
+            
+        });
+
         return newButton;
     }
     
