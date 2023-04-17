@@ -93,11 +93,9 @@ public class StartWindow implements Runnable {
         northPanelRight.add(screenshotbutton);
         
         //TODO: Change the image icon according to the user's choice
-        ImageIcon breakfast = new ImageIcon("Breakfast1.png");
-        JButton imgButton = new JButton(breakfast);
-        imgButton.setBorderPainted(false);
-        imgButton.setBackground(new Color(217, 217, 217));
-        northPanelRight.add(imgButton);
+        ImageIcon category = new ImageIcon("Breakfast1.png");
+        JLabel categoryLabel = new JLabel(category);
+        northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
         
