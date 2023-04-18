@@ -1,12 +1,15 @@
 package com.ohj4;
 
-import java.awt.*;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
 import javax.swing.JFrame;
 
 /**
@@ -33,7 +36,7 @@ public class MyButtonActions implements ActionListener {
             // 'go rank' pressed
             System.out.println(command + " pressed.");
         } else if (command == "screenshot") {
-            // 'go rank' pressed            
+            // 'go rank' pressed
             Point upleft = window.getLocationOnScreen();
             
             // Create a Rectangle object from the bounds and take a screenshot
@@ -46,7 +49,6 @@ public class MyButtonActions implements ActionListener {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
-
         } else {
             throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
         }                
