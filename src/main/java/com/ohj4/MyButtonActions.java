@@ -10,6 +10,7 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JFrame;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -51,8 +52,9 @@ public class MyButtonActions implements ActionListener {
         } else {
             throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
         }                
-    }       
+    }      
 }
+
 
     
 
