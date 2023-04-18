@@ -12,9 +12,11 @@ import javax.swing.*;
 
 public class StartWindow implements Runnable {
 
+    JFrame window;
+
     @Override
     public void run() {
-        JFrame window = new JFrame();
+        window = new JFrame();
         Image logo = Toolkit.getDefaultToolkit().getImage("Logo.png");
 
         window.setIconImage(logo);
@@ -75,10 +77,10 @@ public class StartWindow implements Runnable {
         JPanel northPanelRight = new JPanel(new GridLayout());
         Color buttonPink = new Color(255, 196, 242);
 
-        JButton menubutton = new MyButtons().setNorthButton("Menu", Color.BLACK, "menu");
+        JButton menubutton = new MyButtons(window).setNorthButton("Menu", Color.BLACK, "menu");
         northPanelLeft.add(menubutton);
         
-        JButton gorankbutton = new MyButtons().setNorthButton("Go Rank!", buttonPink, "rank");
+        JButton gorankbutton = new MyButtons(window).setNorthButton("Go Rank!", buttonPink, "rank");
         northPanelLeft.add(gorankbutton);
 
         northPanel.add(northPanelLeft);
@@ -89,7 +91,7 @@ public class StartWindow implements Runnable {
         listName.setFont(listNameFont);
         northPanel.add(listName);
 
-        JButton screenshotbutton = new MyButtons().setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
+        JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
         
         //TODO: Change the image icon according to the user's choice
