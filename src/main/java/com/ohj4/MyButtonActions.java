@@ -8,7 +8,6 @@ import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -52,16 +51,6 @@ public class MyButtonActions implements ActionListener {
             throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
         }                
     }      
-
-
-
-    public static Rectangle getWindowPosition(Window window) {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Rectangle windowRect = window.getBounds();
-        int x = (int) ((screenSize.getWidth() - windowRect.getWidth()) / 2);
-        int y = (int) ((screenSize.getHeight() - windowRect.getHeight()) / 2);
-        return new Rectangle(x, y, (int) windowRect.getWidth(), (int) windowRect.getHeight());
-    }
 }
 
 
