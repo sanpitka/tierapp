@@ -5,7 +5,6 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.border.LineBorder;
 
 /**
  * The MyButtons class creates a JButton with customized properties and adds an ActionListener to it.

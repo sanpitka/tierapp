@@ -31,8 +31,8 @@ public class StartWindow implements Runnable {
         window.add(setRows(), BorderLayout.CENTER);
 
         // add invisible pop up menu on the left side of the screen
-        Component sidebarMenu = setSidebarMenu();
-        window.add(sidebarMenu, BorderLayout.WEST);
+       // Component sidebarMenu = setSidebarMenu();
+       // window.add(sidebarMenu, BorderLayout.WEST);
 
     }
 
