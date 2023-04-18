@@ -3,6 +3,7 @@ package com.ohj4;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 

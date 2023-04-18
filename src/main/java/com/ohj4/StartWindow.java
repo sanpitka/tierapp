@@ -25,12 +25,17 @@ public class StartWindow implements Runnable {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.getContentPane().setBackground(Color.BLACK);
         window.setVisible(true);
-
+        
         window.setLayout(new BorderLayout());
         
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
+
+        // add invisible pop up menu on the left side of the screen
+       // Component sidebarMenu = setSidebarMenu();
+       // window.add(sidebarMenu, BorderLayout.WEST);
+
     }
 
     /**
@@ -100,7 +105,7 @@ public class StartWindow implements Runnable {
         northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
-        
+       
         return northPanel;
     }
 
@@ -141,6 +146,29 @@ public class StartWindow implements Runnable {
         newPanel.add(newLabel);
         newPanel.setBackground(backgroundColor);
         return newPanel;
-    }    
+    } 
+    
+    private Component setSidebarMenu() {
+
+        JPanel sidebarMenu = new JPanel();
+        sidebarMenu.setLayout(new GridLayout(5, 1));
+        sidebarMenu.setBackground(Color.BLACK);
+        sidebarMenu.setPreferredSize(new Dimension(130, 570));
+
+        JMenuItem menu_new = new MyButtons().setMenuButton("New", "new");
+        JMenuItem menu_screenshot = new MyButtons().setMenuButton("Screenshot", "screenshot");
+        JMenuItem menu_import = new MyButtons().setMenuButton("<html>Import<br>Custom</html>", "import");
+
+        sidebarMenu.add(menu_new);
+        sidebarMenu.add(menu_screenshot);
+        sidebarMenu.add(menu_import);
+
+        sidebarMenu.setBorder(null);
+
+        // set sidebarmenu hidden by default
+        sidebarMenu.setVisible(false);
+
+        return sidebarMenu;
+    }
     
 }
