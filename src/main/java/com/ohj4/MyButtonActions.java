@@ -15,10 +15,10 @@ import javax.swing.JFrame;
  */
 public class MyButtonActions implements ActionListener {
 
-    JFrame ikkuna;
+    JFrame window;
 
-    public MyButtonActions(JFrame myWindow) {
-        ikkuna = myWindow;
+    public MyButtonActions(JFrame window) {
+        this.window = window;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class MyButtonActions implements ActionListener {
             System.out.println(command + " pressed.");
         } else if (command == "screenshot") {
             // 'go rank' pressed            
-            Point upleft = ikkuna.getLocationOnScreen();
+            Point upleft = window.getLocationOnScreen();
             
             // Create a Rectangle object from the bounds and take a screenshot
             Rectangle rectangle = new Rectangle(upleft.x + 10, upleft.y, 785, 590);

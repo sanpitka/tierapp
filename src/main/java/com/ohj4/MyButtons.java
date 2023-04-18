@@ -11,9 +11,9 @@ import javax.swing.JPanel;
  */
 public class MyButtons extends JPanel {
 
-    JFrame myWindow;    
+    JFrame window;    
     public MyButtons(JFrame window) {
-        myWindow = window;
+        this.window = window;
     }
 
     public JButton setNorthButton(String buttonText, Color buttonColor, String buttonAction) {
@@ -26,7 +26,7 @@ public class MyButtons extends JPanel {
             newButton.setForeground(Color.WHITE);
         }
         newButton.setFocusPainted(false);
-        newButton.addActionListener(new MyButtonActions(myWindow));
+        newButton.addActionListener(new MyButtonActions(window));
         newButton.setVisible(true);
 
         return newButton;
