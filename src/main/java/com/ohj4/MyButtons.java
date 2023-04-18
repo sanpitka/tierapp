@@ -28,7 +28,6 @@ public class MyButtons extends JPanel {
         }
         newButton.setFocusPainted(false);
         newButton.addActionListener(new MyButtonActions(window));
-        newButton.addActionListener(new MyButtonActions(window));
         newButton.setVisible(true);
 
         return newButton;
