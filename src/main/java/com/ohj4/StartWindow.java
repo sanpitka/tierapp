@@ -31,6 +31,7 @@ public class StartWindow implements Runnable {
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
+
     }
 
     /**
@@ -142,5 +143,25 @@ public class StartWindow implements Runnable {
         newPanel.setBackground(backgroundColor);
         return newPanel;
     }    
+
+    public Component setSidebarMenu() {
+
+        JPanel sidebarMenu = new JPanel();
+        sidebarMenu.setLayout(new GridLayout(5, 1));
+        sidebarMenu.setBackground(Color.BLACK);
+        // sidebarMenu.setPreferredSize(new Dimension((window.getSize().width / 6), 570));
+
+        JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
+        JMenuItem menu_screenshot = new MyButtons(window).setMenuButton("Screenshot", "screenshot");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "import");
+
+        sidebarMenu.add(menu_new);
+        sidebarMenu.add(menu_screenshot);
+        sidebarMenu.add(menu_import);
+
+        sidebarMenu.setBorder(null);
+
+        return sidebarMenu;
+    }
     
 }
