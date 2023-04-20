@@ -2,6 +2,7 @@ package com.ohj4;
 
 import java.awt.Color;
 import java.awt.Font;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -44,6 +45,22 @@ public class MyButtons extends JPanel {
         newButton.setForeground(Color.WHITE);
         newButton.addActionListener(new MyButtonActions(window));
         
+        return newButton;
+    }
+
+    public JButton setDialogButton(String buttonText, String buttonAction) {
+
+        JButton newButton = new JButton(buttonText);
+        newButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        newButton.setBackground(Color.LIGHT_GRAY);
+        newButton.setForeground(Color.BLACK);
+        newButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createEmptyBorder(5,10,5,10)
+        ));
+        newButton.setActionCommand(buttonAction);
+        newButton.addActionListener(new MyButtonActions(window));
+
         return newButton;
     }
 
