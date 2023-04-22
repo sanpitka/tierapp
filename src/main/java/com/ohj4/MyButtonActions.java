@@ -93,6 +93,8 @@ public class MyButtonActions implements ActionListener {
             try {
                 BufferedImage screenshot = new Robot().createScreenCapture(rectangle);
                 ImageIO.write(screenshot, "png", new File("Screenshots/" + setFilename()));
+                Component ssMessage = new StartWindow().setDialogueWindow(this.window, "Screenhot taken!", null, null, 1);
+                ssMessage.setVisible(true);
                 //TODO: Näytä "Screenshot saved" -ilmoitus
             } catch (Exception e1) {
                 // TODO Auto-generated catch block
