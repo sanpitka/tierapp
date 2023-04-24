@@ -12,7 +12,20 @@ import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class StartWindow implements Runnable {
 
@@ -268,5 +281,90 @@ public class StartWindow implements Runnable {
 
         return dialogWindow;
     }
-    
+ 
+    /**
+     * Sets a centered dialog window with no title bar, a list element with logos and buttons, and cancel button.
+     * 
+     * @param dialogOwner the component that sets the relative center position of the window. The program screen is recommended.
+     *                    {@code null} centers the window in the middle of computer screen.
+     * @param dialogText the text to show on the dialog window
+     * @param topicList the JSONArray of topics and logos to display
+     * 
+     * @return the set window component, {@code null} if parameters are incorrect or there are too many buttons
+     */
+    public JDialog setTopicWindow(Component dialogOwner, String dialogText, JSONArray topicList) {
+        
+        JDialog topicWindow = new JDialog();
+        topicWindow.setUndecorated(true); // remove title bar
+        JPanel filler = new JPanel(); // set filler to adjust layout
+        filler.setBackground(Color.LIGHT_GRAY);
+
+        topicWindow.setMinimumSize(new Dimension(500, 200));
+        topicWindow.setMaximumSize(new Dimension(500, 500));
+
+        topicWindow.setLayout(new BorderLayout(10, 10));
+        topicWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
+        topicWindow.setForeground(Color.BLACK);
+        topicWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        topicWindow.setLocationRelativeTo(dialogOwner);
+
+        // set window text
+        JLabel windowtext = new JLabel(dialogText, SwingConstants.LEFT);
+        windowtext.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
+        windowtext.setPreferredSize(new Dimension(300, 40));
+        topicWindow.add(windowtext, BorderLayout.NORTH);
+
+        // set a list element for topics
+        JPanel selectionList = new JPanel();
+        selectionList.setLayout(new GridLayout(0, 1));
+        selectionList.setOpaque(true);
+
+        // get the topics from the JSONArray
+        for (int i = 0; i < topicList.length(); i++) {
+
+            JPanel topicWithButton = new JPanel(new BorderLayout(10, 10));
+            topicWithButton.setBackground(Color.LIGHT_GRAY);
+            JSONObject topic = topicList.getJSONObject(i);
+            topicWithButton.setName(topic.getString("name")); // set element name to topic, to get which topic was selected
+
+            // add the topic logo file
+            JLabel logo = new JLabel(new ImageIcon(topic.getString("logo")));
+            topicWithButton.add(logo, BorderLayout.WEST);
+
+            // display the topic name
+            JLabel topicName = new JLabel(topic.getString("name"));
+            topicName.setBackground(Color.LIGHT_GRAY);
+            topicName.setFont(new Font("Arial", Font.PLAIN, 20));
+            topicWithButton.add(topicName, BorderLayout.CENTER);
+
+            // add the Choose-button
+            JPanel chooseButtonPanel = new JPanel(new BorderLayout());
+            chooseButtonPanel.setBackground(Color.LIGHT_GRAY);
+            chooseButtonPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+            chooseButtonPanel.add(new MyButtons(window).setDialogButton("Choose", "choose"), BorderLayout.CENTER);
+            topicWithButton.add(chooseButtonPanel, BorderLayout.EAST);
+
+            selectionList.add(topicWithButton);
+        }
+
+        // add a scrollbar for easier browsing
+        JScrollPane scrollPane = new JScrollPane(selectionList);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+        topicWindow.add(scrollPane, BorderLayout.CENTER);
+
+        // add a cancel button
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 8));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
+        buttonPanel.add(filler); // add fillers to make button smaller
+        buttonPanel.add(filler);
+        topicWindow.add(buttonPanel, BorderLayout.SOUTH);
+
+        topicWindow.pack();
+
+        return topicWindow;
+    }
+
 }
