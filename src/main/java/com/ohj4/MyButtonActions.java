@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -23,6 +25,7 @@ import javax.swing.JPanel;
 public class MyButtonActions implements ActionListener {
 
     JFrame window;
+    static String filename;
 
     public MyButtonActions(JFrame window) {
         this.window = window;
@@ -81,13 +84,18 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "screenshot") {
             // 'screenshot' pressed
             Point upleft = window.getLocationOnScreen();
-            
-            // Create a Rectangle object from the bounds and take a screenshot
+
+            //Create a folder for screenshots. Returns false if the folder already exists.
+            new File("Screenshots").mkdir();
+
+            // Create a Rectangle object from the application window and take a screenshot
             Rectangle rectangle = new Rectangle(upleft.x + 10, upleft.y, 785, 590);
             try {
                 BufferedImage screenshot = new Robot().createScreenCapture(rectangle);
-                ImageIO.write(screenshot, "png", new File("screenshot.png"));
-
+                ImageIO.write(screenshot, "png", new File("Screenshots/" + setFilename()));
+                Component ssMessage = new StartWindow().setDialogueWindow(this.window, "Screenhot taken!", null, null, 1);
+                ssMessage.setVisible(true);
+                //TODO: Näytä "Screenshot saved" -ilmoitus
             } catch (Exception e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
@@ -127,6 +135,22 @@ public class MyButtonActions implements ActionListener {
 
         return null; // Component not found
 
+    }
+
+    public String setFilename() {
+        //If the user has not changed the list name, set filename to capture+datetime
+            if (filename == null) {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
+            LocalDateTime ldt = LocalDateTime.now();
+            String datetime = ldt.format(formatter);
+            filename = "capture" + datetime;
+        }
+        filename = filename + ".png";
+        return filename;
+    }
+
+    public static void setListname(String listName) {
+        filename = listName;
     }
     
 }

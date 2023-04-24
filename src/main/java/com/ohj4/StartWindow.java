@@ -11,7 +11,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -26,6 +25,7 @@ import javax.swing.SwingConstants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import javax.swing.event.*;
 
 public class StartWindow implements Runnable {
 
@@ -104,11 +104,21 @@ public class StartWindow implements Runnable {
 
         northPanel.add(northPanelLeft);
 
-        JTextField listName = new JTextField("Unnamed tier list...");
-        Font listNameFont = new Font(listName.getFont().getName(),listName.getFont().getStyle(),20);
-        listName.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
-        listName.setFont(listNameFont);
-        northPanel.add(listName);
+         //Sets the list name, lets user change the name
+         JTextField listNameField = new JTextField("Unnamed tier list...");
+         listNameField.getDocument().addDocumentListener(new DocumentListener() {
+             public void insertUpdate(DocumentEvent e) {
+                 String listName = listNameField.getText();
+                 MyButtonActions.setListname(listName);
+             }
+             public void removeUpdate(DocumentEvent e) {}
+             public void changedUpdate(DocumentEvent e) {}
+         });
+         listNameField.setName("listname");
+         Font listNameFont = new Font(listNameField.getFont().getName(),listNameField.getFont().getStyle(),20);
+         listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
+         listNameField.setFont(listNameFont);
+         northPanel.add(listNameField);
 
         JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
