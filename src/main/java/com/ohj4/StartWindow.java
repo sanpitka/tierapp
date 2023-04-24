@@ -25,7 +25,7 @@ import javax.swing.SwingConstants;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.swing.event.*;
-import javax.swing.event.*;
+
 
 public class StartWindow implements Runnable {
 
