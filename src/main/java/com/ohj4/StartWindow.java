@@ -119,21 +119,6 @@ public class StartWindow implements Runnable {
          listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
          listNameField.setFont(listNameFont);
          northPanel.add(listNameField);
-         //Sets the list name, lets user change the name
-         JTextField listNameField = new JTextField("Unnamed tier list...");
-         listNameField.getDocument().addDocumentListener(new DocumentListener() {
-             public void insertUpdate(DocumentEvent e) {
-                 String listName = listNameField.getText();
-                 MyButtonActions.setListname(listName);
-             }
-             public void removeUpdate(DocumentEvent e) {}
-             public void changedUpdate(DocumentEvent e) {}
-         });
-         listNameField.setName("listname");
-         Font listNameFont = new Font(listNameField.getFont().getName(),listNameField.getFont().getStyle(),20);
-         listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
-         listNameField.setFont(listNameFont);
-         northPanel.add(listNameField);
 
         JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
