@@ -46,21 +46,34 @@ public class StartWindow implements Runnable {
         window.setLayout(new BorderLayout());
         
         window.add(setNorthPanel(), BorderLayout.NORTH);
-        window.add(setWestPanel(), BorderLayout.WEST);
+        window.add(setWestPanel(true), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
+
+        JSONArray topics = new RankLists().getTopicList();
+        // TODO remove
+        System.out.println(topics);
 
     }
 
     /** All the screen components go here */
 
     /**
-     * Sets the rank letters
+     * Sets the rank letters on the main screen and in the ranking window.
+     * 
+     * @params isVertical {@code true} if panel should be vertical, {@code false} if the panel should be horizontal
      */
-    private Component setWestPanel() {
+    private Component setWestPanel(boolean isVertical) {
 
         JPanel westPanel = new JPanel();
-        westPanel.setPreferredSize(new Dimension(130,600));
-        westPanel.setLayout(new GridLayout(7,1));
+        
+        if (isVertical) {
+            westPanel.setLayout(new GridLayout(7,1));
+            westPanel.setPreferredSize(new Dimension(130,600));
+        }
+        if (!isVertical) {
+            westPanel.setLayout(new GridLayout(1,7));
+        }
+        
         westPanel.setBackground(new Color(184, 184, 184));
 
         Color labelRed = new Color(220,40,40);
@@ -261,7 +274,7 @@ public class StartWindow implements Runnable {
 
         } 
         
-        // window with no buttons and timeout. must have no buttons and timeout > 0
+        // window with no buttons and timeout. must have no buttons and 10 > timeout > 0
         else if ((buttonLabels == null || buttonLabels.length == 0) && (buttonActions == null || buttonActions.length == 0) && timeout > 0) {
 
             // don't allow too long timeout
@@ -375,6 +388,11 @@ public class StartWindow implements Runnable {
         topicWindow.pack();
 
         return topicWindow;
+    }
+
+    // TODO set ranking dialog window
+    public void setRankingWindow() {
+
     }
 
 }
