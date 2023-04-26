@@ -1,14 +1,6 @@
 package com.ohj4;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.*;
@@ -16,7 +8,6 @@ import javax.swing.event.*;
 
 public class StartWindow implements Runnable {
 
-    public String listName;
     JFrame window;
 
     @Override
@@ -92,21 +83,21 @@ public class StartWindow implements Runnable {
 
         northPanel.add(northPanelLeft);
 
-        //Sets the list name, lets user change the name
-        JTextField listNameField = new JTextField("Unnamed tier list...");
-        listNameField.getDocument().addDocumentListener(new DocumentListener() {
-            public void insertUpdate(DocumentEvent e) {
-                String listName = listNameField.getText();
-                MyButtonActions.setListname(listName);
-            }
-            public void removeUpdate(DocumentEvent e) {}
-            public void changedUpdate(DocumentEvent e) {}
-        });
-        listNameField.setName("listname");
-        Font listNameFont = new Font(listNameField.getFont().getName(),listNameField.getFont().getStyle(),20);
-        listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
-        listNameField.setFont(listNameFont);
-        northPanel.add(listNameField);
+         //Sets the list name, lets user change the name
+         JTextField listNameField = new JTextField("Unnamed tier list...");
+         listNameField.getDocument().addDocumentListener(new DocumentListener() {
+             public void insertUpdate(DocumentEvent e) {
+                 String listName = listNameField.getText();
+                 MyButtonActions.setListname(listName);
+             }
+             public void removeUpdate(DocumentEvent e) {}
+             public void changedUpdate(DocumentEvent e) {}
+         });
+         listNameField.setName("listname");
+         Font listNameFont = new Font(listNameField.getFont().getName(),listNameField.getFont().getStyle(),20);
+         listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
+         listNameField.setFont(listNameFont);
+         northPanel.add(listNameField);
 
         JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
@@ -144,11 +135,6 @@ public class StartWindow implements Runnable {
         return rows;
     }
 
-    /*private String getListame() {
-        System.out.println(listName);
-        return listName;
-    }*/
-
 
     /**
      * Sets the ranking labels in the left-most panel
@@ -175,11 +161,11 @@ public class StartWindow implements Runnable {
         sidebarMenu.setBackground(Color.BLACK);
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
-        JMenuItem menu_screenshot = new MyButtons(window).setMenuButton("Screenshot", "screenshot");
+        JMenuItem menu_screenshots = new MyButtons(window).setMenuButton("Screenshots", "screenshots");
         JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "import");
 
         sidebarMenu.add(menu_new);
-        sidebarMenu.add(menu_screenshot);
+        sidebarMenu.add(menu_screenshots);
         sidebarMenu.add(menu_import);
 
         sidebarMenu.setBorder(null);
