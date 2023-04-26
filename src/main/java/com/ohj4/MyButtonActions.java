@@ -1,19 +1,8 @@
 package com.ohj4;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -25,7 +14,6 @@ import javax.swing.JPanel;
 public class MyButtonActions implements ActionListener {
 
     JFrame window;
-    static String filename;
 
     public MyButtonActions(JFrame window) {
         this.window = window;
@@ -62,7 +50,7 @@ public class MyButtonActions implements ActionListener {
 
                 // Add the popup menu to the glass pane at a specific location
                 glassPane.add(popupMenu);
-                popupMenu.setBounds(0, y, (window.getSize().width / 6), 570);
+                popupMenu.setBounds(0, y, (window.getSize().width / 6 - 2), 570);
                 
                 // Add the glass pane to the root pane of the window and set visibility
                 this.window.getRootPane().setGlassPane(glassPane);
@@ -77,29 +65,19 @@ public class MyButtonActions implements ActionListener {
                 }
             }
 
+
         } else if (command == "rank") {
             // 'go rank' pressed
             System.out.println(command + " pressed.");
 
         } else if (command == "screenshot") {
             // 'screenshot' pressed
-            Point upleft = window.getLocationOnScreen();
-
-            //Create a folder for screenshots. Returns false if the folder already exists.
-            new File("Screenshots").mkdir();
-
-            // Create a Rectangle object from the application window and take a screenshot
-            Rectangle rectangle = new Rectangle(upleft.x + 10, upleft.y, 785, 590);
-            try {
-                BufferedImage screenshot = new Robot().createScreenCapture(rectangle);
-                ImageIO.write(screenshot, "png", new File("Screenshots/" + setFilename()));
-                Component ssMessage = new StartWindow().setDialogueWindow(this.window, "Screenhot taken!", null, null, 1);
-                ssMessage.setVisible(true);
-                //TODO: Näytä "Screenshot saved" -ilmoitus
-            } catch (Exception e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
+            Screenshots shot = new Screenshots();
+            shot.takeScreenshot(window);
+            
+        } else if (command == "screenshots") {
+            System.out.println("Let's open the screenshot file!");
+        
         } else {
             System.out.println("Unimplemented method " + command);
         }                
@@ -137,20 +115,8 @@ public class MyButtonActions implements ActionListener {
 
     }
 
-    public String setFilename() {
-        //If the user has not changed the list name, set filename to capture+datetime
-            if (filename == null) {
-            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
-            LocalDateTime ldt = LocalDateTime.now();
-            String datetime = ldt.format(formatter);
-            filename = "capture" + datetime;
-        }
-        filename = filename + ".png";
-        return filename;
-    }
-
     public static void setListname(String listName) {
-        filename = listName;
+        Screenshots.filename = listName;
     }
     
 }
