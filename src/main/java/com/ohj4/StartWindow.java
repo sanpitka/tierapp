@@ -8,7 +8,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -32,6 +37,7 @@ import javax.swing.event.*;
 public class StartWindow implements Runnable {
 
     JFrame window;
+    private static JSONArray selectionChoices = new JSONArray();
 
     @Override
     public void run() {
@@ -236,7 +242,7 @@ public class StartWindow implements Runnable {
         dialogWindow.setMinimumSize(new Dimension(300, 200));
         dialogWindow.setMaximumSize(new Dimension(500, 400));
 
-        dialogWindow.setLayout(new GridLayout(0, 1, 0, 10));
+        dialogWindow.setLayout(new GridLayout(0, 1, 0, 5));
         dialogWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
         dialogWindow.setForeground(Color.BLACK);
         dialogWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -269,7 +275,7 @@ public class StartWindow implements Runnable {
 
             for (int i = 0; i < buttonLabels.length; i++) {
                 
-                buttonPanel.add(new MyButtons(window).setDialogButton(buttonLabels[i], buttonActions[i]));
+                buttonPanel.add(new MyButtons(this.window).setDialogButton(buttonLabels[i], buttonActions[i]));
 
             }
             
@@ -397,7 +403,8 @@ public class StartWindow implements Runnable {
 
         // get the list for the topics to import
         JSONArray importList = new RankLists().getImportTopics();
-        
+        List<String> list = new ArrayList<>();
+
         JDialog importWindow = new JDialog();
         importWindow.setUndecorated(true); // remove title bar
         JPanel filler = new JPanel(); // set filler to adjust layout
@@ -453,9 +460,28 @@ public class StartWindow implements Runnable {
                 selection.setPreferredSize(new Dimension(20, 20));
                 selection.setBackground(Color.LIGHT_GRAY);
                 selection.setName(topic);
-                topicImportList.add(selection, BorderLayout.EAST);
+                // add a listener to the checkbox to see if it's selected or not
+                selection.addItemListener(new ItemListener() {
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            // Checkbox was selected
+                            list.add(topic);
+                            selectionChoices = new JSONArray(list);
+                            System.out.println(selectionChoices.toString());
 
+                        } else {
+                            // Checkbox was deselected
+                            list.remove(topic);
+                            selectionChoices = new JSONArray(list);
+                            System.out.println(selectionChoices.toString());
+
+                        }
+                    }
+                });
+
+                topicImportList.add(selection, BorderLayout.EAST);
                 selectionList.add(topicImportList);
+
             }
         }
 
@@ -470,12 +496,23 @@ public class StartWindow implements Runnable {
         buttonPanel.setBackground(Color.LIGHT_GRAY);
         buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
         buttonPanel.add(filler); // add fillers to make button smaller
-        buttonPanel.add(new MyButtons(window).setDialogButton("Import selected", "import"));
+        buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton("Import selected", "import"));
         importWindow.add(buttonPanel, BorderLayout.SOUTH);
 
         importWindow.pack();
 
+        // TODO remove
+        System.out.println(selectionChoices);
+
         return importWindow;
+    }
+
+    public static JSONArray getSelectionList() {
+        return selectionChoices;
+    }
+
+    public static void clearSelectionList() {
+        selectionChoices = new JSONArray();
     }
 
     // TODO set ranking dialog window

@@ -138,12 +138,12 @@ public class RankLists {
         return importList;
     }
 
-    private void importTopics(JSONArray importList) {
+    public boolean importTopics(JSONArray importList) {
 
-        String topicListPath = "topic.json";
+        String topicListPath = "topics.json";
 
         try {
-            
+
             if (importList != null) {
 
                 JSONArray topicList = getTopicList();
@@ -157,10 +157,13 @@ public class RankLists {
                 FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
                 fileOutputStream.write(topicList.toString().getBytes());
                 fileOutputStream.close();
+                return true;
             }
+            return false;
 
         } catch (Exception e) {
             System.out.println("Error importing topics " + e);
+            return false;
         }
     }
     

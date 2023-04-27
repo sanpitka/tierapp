@@ -15,9 +15,13 @@ import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
+import org.json.JSONArray;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -39,7 +43,7 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command == "menu") {
-            
+
             // menu button pressed
             System.out.println(command + " pressed.");
 
@@ -77,18 +81,47 @@ public class MyButtonActions implements ActionListener {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
             } 
+        } else if (command == "sidebarimport") {
+            // TODO make this a splash screen, or get it to work otherwise
+            String dialogtext = (new StringBuilder()).append("<html>Creating new topics:<p>1. Create a new folder for your topic<br>inside /topics/ folder in the root folder.<br>") 
+                        .append("2. Place all objects to be tiered inside that created folder.<br>") 
+                        .append("Adding new objects into an existing topic:<p>")
+                        .append("Place all new objects* to be tiered inside<br>a topic folder of choice in /topics/.<br>")
+                        .append("They will be imported automatically.<br>")
+                        .append("*Supported object formats: png, jpeg</html>").toString();
+            String[] buttonlabels = {"Cancel", "Continue to Import"};
+            String[] buttonactions = {"cancel", "importbutton"};
+            Component importmessage = new StartWindow().setDialogueWindow(this.window, dialogtext, buttonlabels, buttonactions, 0);
+            importmessage.setName("importmessage");
+            importmessage.setVisible(true);
+
         } else if (command == "importbutton") {
             // 'sidemenu import' pressed
             System.out.println(command + " pressed.");
-            // TODO remove
-            System.out.println("importbuttonactions "+this.window);
 
-            Component importdialog = new StartWindow().setImportWindow(this.window, "import");
+            Component importdialog = new StartWindow().setImportWindow(this.window, "Custom topics to import");
             importdialog.setVisible(true);
+
 
         } else if (command == "import") {
             // 'import button' pressed
             System.out.println(command + " pressed.");
+
+            // import chosen topics
+            JSONArray importList = StartWindow.getSelectionList();
+            StartWindow.clearSelectionList();
+
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
+
+            if (new RankLists().importTopics(importList)) {
+                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
+                okmessage.setVisible(true);
+            }
+
+            
+
         } else {
             System.out.println("Unimplemented method " + command);
         }                
