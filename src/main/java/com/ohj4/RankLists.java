@@ -5,10 +5,6 @@ import java.io.FileOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,35 +14,64 @@ import org.json.JSONObject;
  */
 public class RankLists {
     
-
-    // TODO get topic list
     public JSONArray getTopicList() {
 
         JSONArray topicList = new JSONArray();
-        String folderpath = "topics/";
         String topicListPath = "topics.json";
-        File folder = new File(folderpath);
         
         // get the content of "topics" folder
         try {
 
+            File topicListFile = new File(topicListPath);
+                
+            if (!topicListFile.exists()) {
+                // if not found, create an new topics.json file with an empty JSONArray
+                FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
+                fileOutputStream.write(topicList.toString().getBytes());
+                fileOutputStream.close();
+            }
+
+            // read the topic list file content to JSONArray
+            String fileContent = Files.readString(Paths.get("topics.json"), StandardCharsets.UTF_8);
+            topicList = new JSONArray(fileContent); 
+
+        } catch (Exception e) {
+            // TODO make this an error dialog for the user
+            System.out.println("Error getting topics.json list: " + e);
+        }
+        return topicList;
+    }
+
+    public JSONArray getImportTopics() {
+        
+        JSONArray importList = new JSONArray(); // list of topics that are new
+        JSONArray topicList = new JSONArray(); // list of topics that exist in the list
+        String folderpath = "topics/";
+        String topicListPath = "topics.json";
+        File folder = new File(folderpath);
+        
+        try {
+            
             if (folder.exists() && folder.isDirectory()) {
                 
-                File[] foldernames = folder.listFiles();
-                File topicListFile = new File(topicListPath);
+                File[] foldernames = folder.listFiles(); // get the content of "topics" folder
+                File topicListFile = new File(topicListPath); // get the topics.json-file
                 
                 if (!topicListFile.exists()) {
                     // if not found, create an new topics.json file with an empty JSONArray
                     FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                    fileOutputStream.write(topicList.toString().getBytes());
+                    fileOutputStream.write(new JSONArray().toString().getBytes());
                     fileOutputStream.close();
                 }
 
                 // read the topic list file content to JSONArray
-                String fileContent = Files.readString(Paths.get("topics.json"), StandardCharsets.UTF_8);
+                String fileContent = Files.readString(Paths.get(topicListPath), StandardCharsets.UTF_8);
                 topicList = new JSONArray(fileContent);
 
-                // update the topics.json-file according to the topics-folder content
+                //TODO remove
+                System.out.println(topicList.toString());
+
+                // compare the topics.json file with the 'topics/' folder content
                 for (File foldername: foldernames) {
 
                     JSONObject topic = new JSONObject();
@@ -55,59 +80,99 @@ public class RankLists {
                     // search the topic from the topic list file content
                     JSONObject searchResult = searchForObject(topicList, topic);
 
-                    // topic was not found in the topic list file content, add new topic
+                    // topic was not found in the topic list file content, mark it in the importList
                     if (searchResult == null) {
-                        topic = setNewTopic(foldername.getName());
-                        topicList.put(topic);
+                        importList.put(foldername.getName());
                     }
                     else {
-                        // topic was found, check that all the files in that topics folder are listed
-                        // and that all files in the topics file list are present
+                        // topic was found, compare all the files in the topic folder to the topics.json.
+                        // if a file is new, import it automatically
                         topic = searchResult;
-                        String topicpath = folderpath + foldername.toString() + "/";
+                        String topicpath = folderpath + foldername.getName() + "/";
                         File topicfile = new File(topicpath);
                         File[] topicfiles = topicfile.listFiles();
 
                         if (topicfiles != null) {
 
+                            JSONArray fileList = topic.getJSONArray("files");
+
                             for (File file: topicfiles) {                     
                                 if (!searchForFile(topic, file.getName())) {
-                                    topic.put("files", file.getName());
+                                    fileList.put(file.getName());
                                 }
                             }
+
+                            topic.put("files", fileList); // add new files to filelist
 
                             // clean files that don't exist from the topics file list to prevent errors
                             topic = cleanFileList(topic);
 
-                            // replace the topic object with the updated one.
+                            // replace the topic object with the cleaned one.
                             // index is added to the object when searchForObject()-method finds it in list
                             int i = topic.getInt("index");
                             topic.remove("index"); // it's now safe to remove the index
                             topicList.getJSONObject(i).remove("index");
                             topicList.put(i, topic);
                         }
+
+                        // update topics.json file with the new files
+                        FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
+                        fileOutputStream.write(topicList.toString().getBytes());
+                        fileOutputStream.close();
+
                     }
 
-                    // update topics.json file
-                    FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                    fileOutputStream.write(topicList.toString().getBytes());
-                    fileOutputStream.close();
-
                 }
-
             } else {
                 // no topics-folder found, create the folder
                 folder.mkdir();
             }
 
+
         } catch (Exception e) {
             // TODO make this an error dialog for the user
-            System.out.println("Error in topics folder or list:" + e);
+            System.out.print("Error in topics folder or list: ");
+            e.printStackTrace();
         }
-        return topicList;
+
+        return importList;
+    }
+
+    private void importTopics(JSONArray importList) {
+
+        String topicListPath = "topic.json";
+
+        try {
+            
+            if (importList != null) {
+
+                JSONArray topicList = getTopicList();
+
+                for (int i = 0; i < importList.length(); i++) {
+                    JSONObject topic = setNewTopic(importList.getString(i));
+                    topicList.put(topic);
+                }
+
+                // update topics.json file
+                FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
+                fileOutputStream.write(topicList.toString().getBytes());
+                fileOutputStream.close();
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error importing topics " + e);
+        }
     }
     
-    // TODO set new topic
+    /**
+     * The function creates a new JSON object representing a topic and adds its name and files to it,
+     * creating a new folder for the topic if it doesn't already exist.
+     * 
+     * @param topicname A string representing the name of the new topic to be created.
+     * @return A JSONObject containing information about a new topic, including its name and a
+     * JSONArray of files associated with it. If the topic folder does not exist, it will be created.
+     * If there is an error opening the topics folder, null will be returned.
+     */
     public JSONObject setNewTopic(String topicname) {
         JSONObject newTopic = new JSONObject();
         String folderpath = "topics/" + topicname + "/";
@@ -117,6 +182,11 @@ public class RankLists {
 
         // search for files in the topic path
         try {
+
+            if (!topicfolder.exists()) {
+                // no folder for topic found, create the folder
+                topicfolder.mkdir();
+            }
             
             if (topicfolder.exists() && topicfolder.isDirectory()) {
 
@@ -130,10 +200,6 @@ public class RankLists {
 
                 newTopic.put("files", files);
 
-            }
-            else {
-                // no folder for topic found, create the folder
-                topicfolder.mkdir();
             }
 
         } catch (Exception e) {
@@ -166,7 +232,14 @@ public class RankLists {
         return false;
     }
 
-    public JSONObject cleanFileList(JSONObject topic) {
+    /**
+     * The function removes non-existent files from a topic.
+     * 
+     * @param topic A JSONObject representing a topic, which contains a name (String) and an array of
+     * files (JSONArray).
+     * @return the cleaned topic object.
+     */
+    private JSONObject cleanFileList(JSONObject topic) {
 
         String folderpath = "topics/" + topic.getString("name") + "/";
         JSONArray filelist = topic.getJSONArray("files"); 
@@ -174,7 +247,7 @@ public class RankLists {
         if (filelist != null && filelist.length() > 0) {
 
             for (int i = 0; i < filelist.length(); i++) {
-                String filename = filelist.getString(i);
+                String filename = filelist.get(i).toString();
                 String filepath = folderpath + filename;
                 File file = new File(filepath);
 
@@ -210,6 +283,15 @@ public class RankLists {
         return null;
     }
 
+    /**
+     * The function searches for a specific file in a topic, and returns true if found, otherwise
+     * returns false. If there is no file list in the topic, create one and return false.
+     * 
+     * @param topic A JSONObject representing a topic, which may or may not have a list of files
+     * associated with it.
+     * @param filename The name of the file that we are searching for in the JSON object.
+     * @return The method returns a boolean value, either true or false.
+     */
     private boolean searchForFile(JSONObject topic, String filename) {
 
         if (topic.has("files")) {

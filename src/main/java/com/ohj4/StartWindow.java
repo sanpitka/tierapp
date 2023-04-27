@@ -14,11 +14,13 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -52,6 +54,7 @@ public class StartWindow implements Runnable {
         JSONArray topics = new RankLists().getTopicList();
         // TODO remove
         System.out.println(topics);
+        
 
     }
 
@@ -188,15 +191,15 @@ public class StartWindow implements Runnable {
     /**
      * Sets the sidebar menu
      */
-    public Component setSidebarMenu() {
+    public JPopupMenu setSidebarMenu(JFrame window) {
 
-        JPanel sidebarMenu = new JPanel();
+        JPopupMenu sidebarMenu = new JPopupMenu();
         sidebarMenu.setLayout(new GridLayout(5, 1));
         sidebarMenu.setBackground(Color.BLACK);
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
         JMenuItem menu_screenshot = new MyButtons(window).setMenuButton("Screenshot", "screenshot");
-        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "import");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "importbutton");
 
         sidebarMenu.add(menu_new);
         sidebarMenu.add(menu_screenshot);
@@ -388,6 +391,91 @@ public class StartWindow implements Runnable {
         topicWindow.pack();
 
         return topicWindow;
+    }
+
+    public JDialog setImportWindow(Component dialogOwner, String dialogText) {
+
+        // get the list for the topics to import
+        JSONArray importList = new RankLists().getImportTopics();
+        
+        JDialog importWindow = new JDialog();
+        importWindow.setUndecorated(true); // remove title bar
+        JPanel filler = new JPanel(); // set filler to adjust layout
+        filler.setBackground(Color.LIGHT_GRAY);
+
+        importWindow.setMinimumSize(new Dimension(500, 200));
+        importWindow.setMaximumSize(new Dimension(500, 500));
+
+        importWindow.setLayout(new BorderLayout(10, 10));
+        importWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
+        importWindow.setForeground(Color.BLACK);
+        importWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        importWindow.setLocationRelativeTo(dialogOwner);
+
+        // set window text
+        JLabel windowtext = new JLabel(dialogText, SwingConstants.LEFT);
+        windowtext.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
+        windowtext.setPreferredSize(new Dimension(300, 40));
+        importWindow.add(windowtext, BorderLayout.NORTH);
+        
+        // set a list element for topics
+        JPanel selectionList = new JPanel();
+        selectionList.setLayout(new GridLayout(0, 1));
+        selectionList.setBackground(Color.LIGHT_GRAY);
+
+        // TODO remove
+        System.out.println(importList.toString());
+
+        if (importList == null || importList.length() == 0) {
+
+            JLabel error = new JLabel("No topics to import", null, 0);
+            error.setFont(new Font("Arial", Font.PLAIN, 20));
+            error.setBackground(Color.LIGHT_GRAY);
+            selectionList.add(error);
+
+        } else {
+            // get the topics from the JSONArray
+                for (int i = 0; i < importList.length(); i++) {
+
+                JPanel topicImportList = new JPanel(new BorderLayout(10, 10));
+                topicImportList.setBackground(Color.LIGHT_GRAY);
+                String topic = importList.getString(i);
+
+                // display the topic name
+                JLabel topicName = new JLabel(topic);
+                topicName.setBackground(Color.LIGHT_GRAY);
+                topicName.setFont(new Font("Arial", Font.PLAIN, 20));
+                topicImportList.add(topicName, BorderLayout.CENTER);
+
+                // add the checkbox
+                JCheckBox selection = new JCheckBox();
+                selection.setPreferredSize(new Dimension(20, 20));
+                selection.setBackground(Color.LIGHT_GRAY);
+                selection.setName(topic);
+                topicImportList.add(selection, BorderLayout.EAST);
+
+                selectionList.add(topicImportList);
+            }
+        }
+
+        // add a scrollbar for easier browsing
+        JScrollPane scrollPane = new JScrollPane(selectionList);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+        importWindow.add(scrollPane, BorderLayout.CENTER);
+
+        // add a cancel button
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 8));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
+        buttonPanel.add(filler); // add fillers to make button smaller
+        buttonPanel.add(new MyButtons(window).setDialogButton("Import selected", "import"));
+        importWindow.add(buttonPanel, BorderLayout.SOUTH);
+
+        importWindow.pack();
+
+        return importWindow;
     }
 
     // TODO set ranking dialog window

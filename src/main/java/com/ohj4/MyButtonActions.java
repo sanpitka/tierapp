@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -38,44 +39,20 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command == "menu") {
+            
             // menu button pressed
             System.out.println(command + " pressed.");
 
-            // Check if there already is a sidebarmenu component
-            Component component = findComponentByName(window, "glasspane");
-
-            // Sidebarmenu was not found, create a new one
-            if (component == null) {
-
-                Component popupMenu = new StartWindow().setSidebarMenu();
-
-                // Create a glass pane and make it transparent to pop the menu on top of the default screen
-                JPanel glassPane = new JPanel();
-                glassPane.setName("glasspane");
-                glassPane.setOpaque(false);
-                glassPane.setLayout(null);
-                
-                // Get the menu button lower left corner coordinates for the sidebar menu
-                JButton button = (JButton) e.getSource();
-                Dimension buttonSize = button.getSize();
-                int y = buttonSize.height;
-
-                // Add the popup menu to the glass pane at a specific location
-                glassPane.add(popupMenu);
-                popupMenu.setBounds(0, y, (window.getSize().width / 6), 570);
-                
-                // Add the glass pane to the root pane of the window and set visibility
-                this.window.getRootPane().setGlassPane(glassPane);
-                glassPane.setVisible(true);
-
-            } else {
-                // if the sidebar menu is currently visible, hide the sidebar and vice versa
-                if (component.isVisible()) {
-                    component.setVisible(false);
-                } else {
-                    component.setVisible(true);
-                }
-            }
+            JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
+            popupMenu.setName("popupmenu");
+                    
+            // Get the menu button lower left corner coordinates for the sidebar menu
+            JButton button = (JButton) e.getSource();
+            Dimension buttonSize = button.getSize();
+            int y = buttonSize.height;
+            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6), 470));
+            popupMenu.show(button, 0, y);
+            
 
         } else if (command == "rank") {
             // 'go rank' pressed
@@ -99,7 +76,19 @@ public class MyButtonActions implements ActionListener {
             } catch (Exception e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
-            }
+            } 
+        } else if (command == "importbutton") {
+            // 'sidemenu import' pressed
+            System.out.println(command + " pressed.");
+            // TODO remove
+            System.out.println("importbuttonactions "+this.window);
+
+            Component importdialog = new StartWindow().setImportWindow(this.window, "import");
+            importdialog.setVisible(true);
+
+        } else if (command == "import") {
+            // 'import button' pressed
+            System.out.println(command + " pressed.");
         } else {
             System.out.println("Unimplemented method " + command);
         }                
