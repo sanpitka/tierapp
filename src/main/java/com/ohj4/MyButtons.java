@@ -28,7 +28,7 @@ public class MyButtons extends JPanel {
             newButton.setForeground(Color.WHITE);
         }
         newButton.setFocusPainted(false);
-        newButton.addActionListener(new MyButtonActions(window));
+        newButton.addActionListener(new MyButtonActions(this.window));
         newButton.setVisible(true);
 
         return newButton;
@@ -44,7 +44,6 @@ public class MyButtons extends JPanel {
         newButton.setActionCommand(buttonAction);
         newButton.setForeground(Color.WHITE);
         newButton.addActionListener(new MyButtonActions(window));
-        
         return newButton;
     }
 
@@ -59,7 +58,7 @@ public class MyButtons extends JPanel {
             BorderFactory.createEmptyBorder(5,10,5,10)
         ));
         newButton.setActionCommand(buttonAction);
-        newButton.addActionListener(new MyButtonActions(window));
+        newButton.addActionListener(new MyButtonActions(this.window));
 
         return newButton;
     }

@@ -8,17 +8,24 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+
 import java.awt.Toolkit;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -30,6 +37,7 @@ import javax.swing.event.*;
 public class StartWindow implements Runnable {
 
     JFrame window;
+    private static JSONArray selectionChoices = new JSONArray();
 
     @Override
     public void run() {
@@ -46,7 +54,7 @@ public class StartWindow implements Runnable {
         window.setLayout(new BorderLayout());
         
         window.add(setNorthPanel(), BorderLayout.NORTH);
-        window.add(setWestPanel(), BorderLayout.WEST);
+        window.add(setWestPanel(true), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
 
     }
@@ -54,13 +62,22 @@ public class StartWindow implements Runnable {
     /** All the screen components go here */
 
     /**
-     * Sets the rank letters
+     * Sets the rank letters on the main screen and in the ranking window.
+     * 
+     * @params isVertical {@code true} if panel should be vertical, {@code false} if the panel should be horizontal
      */
-    private Component setWestPanel() {
+    private Component setWestPanel(boolean isVertical) {
 
         JPanel westPanel = new JPanel();
-        westPanel.setPreferredSize(new Dimension(130,600));
-        westPanel.setLayout(new GridLayout(7,1));
+        
+        if (isVertical) {
+            westPanel.setLayout(new GridLayout(7,1));
+            westPanel.setPreferredSize(new Dimension(130,600));
+        }
+        if (!isVertical) {
+            westPanel.setLayout(new GridLayout(1,7));
+        }
+        
         westPanel.setBackground(new Color(184, 184, 184));
 
         Color labelRed = new Color(220,40,40);
@@ -175,15 +192,15 @@ public class StartWindow implements Runnable {
     /**
      * Sets the sidebar menu
      */
-    public Component setSidebarMenu() {
+    public JPopupMenu setSidebarMenu(JFrame window) {
 
-        JPanel sidebarMenu = new JPanel();
+        JPopupMenu sidebarMenu = new JPopupMenu();
         sidebarMenu.setLayout(new GridLayout(5, 1));
         sidebarMenu.setBackground(Color.BLACK);
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
         JMenuItem menu_screenshot = new MyButtons(window).setMenuButton("Screenshot", "screenshot");
-        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "import");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "importbutton");
 
         sidebarMenu.add(menu_new);
         sidebarMenu.add(menu_screenshot);
@@ -220,7 +237,7 @@ public class StartWindow implements Runnable {
         dialogWindow.setMinimumSize(new Dimension(300, 200));
         dialogWindow.setMaximumSize(new Dimension(500, 400));
 
-        dialogWindow.setLayout(new GridLayout(0, 1, 0, 10));
+        dialogWindow.setLayout(new GridLayout(0, 1, 0, 5));
         dialogWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
         dialogWindow.setForeground(Color.BLACK);
         dialogWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
@@ -253,7 +270,7 @@ public class StartWindow implements Runnable {
 
             for (int i = 0; i < buttonLabels.length; i++) {
                 
-                buttonPanel.add(new MyButtons(window).setDialogButton(buttonLabels[i], buttonActions[i]));
+                buttonPanel.add(new MyButtons(this.window).setDialogButton(buttonLabels[i], buttonActions[i]));
 
             }
             
@@ -261,7 +278,7 @@ public class StartWindow implements Runnable {
 
         } 
         
-        // window with no buttons and timeout. must have no buttons and timeout > 0
+        // window with no buttons and timeout. must have no buttons and 10 > timeout > 0
         else if ((buttonLabels == null || buttonLabels.length == 0) && (buttonActions == null || buttonActions.length == 0) && timeout > 0) {
 
             // don't allow too long timeout
@@ -375,6 +392,121 @@ public class StartWindow implements Runnable {
         topicWindow.pack();
 
         return topicWindow;
+    }
+
+    public JDialog setImportWindow(Component dialogOwner, String dialogText) {
+
+        // get the list for the topics to import
+        JSONArray importList = new RankLists().getImportTopics();
+        List<String> list = new ArrayList<>();
+
+        JDialog importWindow = new JDialog();
+        importWindow.setUndecorated(true); // remove title bar
+        JPanel filler = new JPanel(); // set filler to adjust layout
+        filler.setBackground(Color.LIGHT_GRAY);
+
+        importWindow.setMinimumSize(new Dimension(500, 200));
+        importWindow.setMaximumSize(new Dimension(500, 500));
+
+        importWindow.setLayout(new BorderLayout(10, 10));
+        importWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
+        importWindow.setForeground(Color.BLACK);
+        importWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        importWindow.setLocationRelativeTo(dialogOwner);
+
+        // set window text
+        JLabel windowtext = new JLabel(dialogText, SwingConstants.LEFT);
+        windowtext.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
+        windowtext.setPreferredSize(new Dimension(300, 40));
+        importWindow.add(windowtext, BorderLayout.NORTH);
+        
+        // set a list element for topics
+        JPanel selectionList = new JPanel();
+        selectionList.setLayout(new GridLayout(0, 1));
+        selectionList.setBackground(Color.LIGHT_GRAY);
+
+        if (importList == null || importList.length() == 0) {
+
+            JLabel error = new JLabel("No topics to import", null, 0);
+            error.setFont(new Font("Arial", Font.PLAIN, 20));
+            error.setBackground(Color.LIGHT_GRAY);
+            selectionList.add(error);
+
+        } else {
+            // get the topics from the JSONArray
+                for (int i = 0; i < importList.length(); i++) {
+
+                JPanel topicImportList = new JPanel(new BorderLayout(10, 10));
+                topicImportList.setBackground(Color.LIGHT_GRAY);
+                String topic = importList.getString(i);
+
+                // display the topic name
+                JLabel topicName = new JLabel(topic);
+                topicName.setBackground(Color.LIGHT_GRAY);
+                topicName.setFont(new Font("Arial", Font.PLAIN, 20));
+                topicImportList.add(topicName, BorderLayout.CENTER);
+
+                // add the checkbox
+                JCheckBox selection = new JCheckBox();
+                selection.setPreferredSize(new Dimension(20, 20));
+                selection.setBackground(Color.LIGHT_GRAY);
+                selection.setName(topic);
+                // add a listener to the checkbox to see if it's selected or not
+                selection.addItemListener(new ItemListener() {
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            // Checkbox was selected
+                            list.add(topic);
+                            selectionChoices = new JSONArray(list);
+                            System.out.println(selectionChoices.toString());
+
+                        } else {
+                            // Checkbox was deselected
+                            list.remove(topic);
+                            selectionChoices = new JSONArray(list);
+                            System.out.println(selectionChoices.toString());
+
+                        }
+                    }
+                });
+
+                topicImportList.add(selection, BorderLayout.EAST);
+                selectionList.add(topicImportList);
+
+            }
+        }
+
+        // add a scrollbar for easier browsing
+        JScrollPane scrollPane = new JScrollPane(selectionList);
+        scrollPane.setPreferredSize(new Dimension(400, 200));
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+        importWindow.add(scrollPane, BorderLayout.CENTER);
+
+        // add a cancel button
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 8));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
+        buttonPanel.add(filler); // add fillers to make button smaller
+        buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton("Import selected", "import"));
+        importWindow.add(buttonPanel, BorderLayout.SOUTH);
+
+        importWindow.pack();
+
+        return importWindow;
+    }
+
+    public static JSONArray getSelectionList() {
+        return selectionChoices;
+    }
+
+    public static void clearSelectionList() {
+        selectionChoices = new JSONArray();
+    }
+
+    // TODO set ranking dialog window
+    public void setRankingWindow() {
+
     }
 
 }

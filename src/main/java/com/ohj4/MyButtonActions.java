@@ -15,8 +15,13 @@ import java.time.format.DateTimeFormatter;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.SwingUtilities;
+
+import org.json.JSONArray;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -38,44 +43,20 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command == "menu") {
+
             // menu button pressed
             System.out.println(command + " pressed.");
 
-            // Check if there already is a sidebarmenu component
-            Component component = findComponentByName(window, "glasspane");
-
-            // Sidebarmenu was not found, create a new one
-            if (component == null) {
-
-                Component popupMenu = new StartWindow().setSidebarMenu();
-
-                // Create a glass pane and make it transparent to pop the menu on top of the default screen
-                JPanel glassPane = new JPanel();
-                glassPane.setName("glasspane");
-                glassPane.setOpaque(false);
-                glassPane.setLayout(null);
-                
-                // Get the menu button lower left corner coordinates for the sidebar menu
-                JButton button = (JButton) e.getSource();
-                Dimension buttonSize = button.getSize();
-                int y = buttonSize.height;
-
-                // Add the popup menu to the glass pane at a specific location
-                glassPane.add(popupMenu);
-                popupMenu.setBounds(0, y, (window.getSize().width / 6), 570);
-                
-                // Add the glass pane to the root pane of the window and set visibility
-                this.window.getRootPane().setGlassPane(glassPane);
-                glassPane.setVisible(true);
-
-            } else {
-                // if the sidebar menu is currently visible, hide the sidebar and vice versa
-                if (component.isVisible()) {
-                    component.setVisible(false);
-                } else {
-                    component.setVisible(true);
-                }
-            }
+            JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
+            popupMenu.setName("popupmenu");
+                    
+            // Get the menu button lower left corner coordinates for the sidebar menu
+            JButton button = (JButton) e.getSource();
+            Dimension buttonSize = button.getSize();
+            int y = buttonSize.height;
+            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6), 470));
+            popupMenu.show(button, 0, y);
+            
 
         } else if (command == "rank") {
             // 'go rank' pressed
@@ -99,7 +80,48 @@ public class MyButtonActions implements ActionListener {
             } catch (Exception e1) {
                 // TODO Auto-generated catch block
                 e1.printStackTrace();
+            } 
+        } else if (command == "sidebarimport") {
+            // TODO make this a splash screen, or get it to work otherwise
+            String dialogtext = (new StringBuilder()).append("<html>Creating new topics:<p>1. Create a new folder for your topic<br>inside /topics/ folder in the root folder.<br>") 
+                        .append("2. Place all objects to be tiered inside that created folder.<br>") 
+                        .append("Adding new objects into an existing topic:<p>")
+                        .append("Place all new objects* to be tiered inside<br>a topic folder of choice in /topics/.<br>")
+                        .append("They will be imported automatically.<br>")
+                        .append("*Supported object formats: png, jpeg</html>").toString();
+            String[] buttonlabels = {"Cancel", "Continue to Import"};
+            String[] buttonactions = {"cancel", "importbutton"};
+            Component importmessage = new StartWindow().setDialogueWindow(this.window, dialogtext, buttonlabels, buttonactions, 0);
+            importmessage.setName("importmessage");
+            importmessage.setVisible(true);
+
+        } else if (command == "importbutton") {
+            // 'sidemenu import' pressed
+            System.out.println(command + " pressed.");
+
+            Component importdialog = new StartWindow().setImportWindow(this.window, "Custom topics to import");
+            importdialog.setVisible(true);
+
+
+        } else if (command == "import") {
+            // 'import button' pressed
+            System.out.println(command + " pressed.");
+
+            // import chosen topics
+            JSONArray importList = StartWindow.getSelectionList();
+            StartWindow.clearSelectionList();
+
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
+
+            if (new RankLists().importTopics(importList)) {
+                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
+                okmessage.setVisible(true);
             }
+
+            
+
         } else {
             System.out.println("Unimplemented method " + command);
         }                
