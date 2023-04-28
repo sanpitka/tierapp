@@ -154,15 +154,15 @@ public class StartWindow implements Runnable {
     /**
      * Sets the sidebar menu
      */
-    public Component setSidebarMenu() {
+    public JPopupMenu setSidebarMenu(JFrame window) {
 
-        JPanel sidebarMenu = new JPanel();
+        JPopupMenu sidebarMenu = new JPopupMenu();
         sidebarMenu.setLayout(new GridLayout(5, 1));
         sidebarMenu.setBackground(Color.BLACK);
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
         JMenuItem menu_screenshots = new MyButtons(window).setMenuButton("Screenshots", "screenshots");
-        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "import");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "importbutton");
 
         sidebarMenu.add(menu_new);
         sidebarMenu.add(menu_screenshots);
@@ -172,7 +172,6 @@ public class StartWindow implements Runnable {
 
         return sidebarMenu;
     }
-
     /**
      * Sets a centered dialog window with no title bar. If no buttons are given, the window closes
      * after {@code timeout} seconds. Maximum 5 buttons.

@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 /**
  * The class MyButtonActions implements ActionListener and defines actions for different button
@@ -29,41 +29,16 @@ public class MyButtonActions implements ActionListener {
             // menu button pressed
             System.out.println(command + " pressed.");
 
-            // Check if there already is a sidebarmenu component
-            Component component = findComponentByName(window, "glasspane");
+            JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
+            popupMenu.setName("popupmenu");
 
-            // Sidebarmenu was not found, create a new one
-            if (component == null) {
+            // Get the menu button lower left corner coordinates for the sidebar menu
+            JButton button = (JButton) e.getSource();
+            Dimension buttonSize = button.getSize();
+            int y = buttonSize.height;
+            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
+            popupMenu.show(button, 0, y);
 
-                Component popupMenu = new StartWindow().setSidebarMenu();
-
-                // Create a glass pane and make it transparent to pop the menu on top of the default screen
-                JPanel glassPane = new JPanel();
-                glassPane.setName("glasspane");
-                glassPane.setOpaque(false);
-                glassPane.setLayout(null);
-                
-                // Get the menu button lower left corner coordinates for the sidebar menu
-                JButton button = (JButton) e.getSource();
-                Dimension buttonSize = button.getSize();
-                int y = buttonSize.height;
-
-                // Add the popup menu to the glass pane at a specific location
-                glassPane.add(popupMenu);
-                popupMenu.setBounds(0, y, (window.getSize().width / 6 - 2), 570);
-                
-                // Add the glass pane to the root pane of the window and set visibility
-                this.window.getRootPane().setGlassPane(glassPane);
-                glassPane.setVisible(true);
-
-            } else {
-                // if the sidebar menu is currently visible, hide the sidebar and vice versa
-                if (component.isVisible()) {
-                    component.setVisible(false);
-                } else {
-                    component.setVisible(true);
-                }
-            }
 
 
         } else if (command == "rank") {
@@ -76,7 +51,14 @@ public class MyButtonActions implements ActionListener {
             shot.takeScreenshot(window);
             
         } else if (command == "screenshots") {
-            System.out.println("Let's open the screenshot file!");
+            System.out.println("Let's open the screenshot files!");
+
+            JPopupMenu screenshots = new Screenshots().showScreenshots();
+            screenshots.setName("screenshots");
+            screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 478));
+            screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 115);
+
+            
         
         } else {
             System.out.println("Unimplemented method " + command);
