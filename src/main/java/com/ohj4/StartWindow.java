@@ -57,11 +57,6 @@ public class StartWindow implements Runnable {
         window.add(setWestPanel(true), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
 
-        JSONArray topics = new RankLists().getTopicList();
-        // TODO remove
-        System.out.println(topics);
-        
-
     }
 
     /** All the screen components go here */
@@ -431,9 +426,6 @@ public class StartWindow implements Runnable {
         selectionList.setLayout(new GridLayout(0, 1));
         selectionList.setBackground(Color.LIGHT_GRAY);
 
-        // TODO remove
-        System.out.println(importList.toString());
-
         if (importList == null || importList.length() == 0) {
 
             JLabel error = new JLabel("No topics to import", null, 0);
@@ -500,9 +492,6 @@ public class StartWindow implements Runnable {
         importWindow.add(buttonPanel, BorderLayout.SOUTH);
 
         importWindow.pack();
-
-        // TODO remove
-        System.out.println(selectionChoices);
 
         return importWindow;
     }

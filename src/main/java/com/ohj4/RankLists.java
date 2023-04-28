@@ -68,9 +68,6 @@ public class RankLists {
                 String fileContent = Files.readString(Paths.get(topicListPath), StandardCharsets.UTF_8);
                 topicList = new JSONArray(fileContent);
 
-                //TODO remove
-                System.out.println(topicList.toString());
-
                 // compare the topics.json file with the 'topics/' folder content
                 for (File foldername: foldernames) {
 
