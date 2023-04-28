@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
@@ -42,7 +41,7 @@ public class MyButtonActions implements ActionListener {
             JButton button = (JButton) e.getSource();
             Dimension buttonSize = button.getSize();
             int y = buttonSize.height;
-            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6), 470));
+            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 470));
             popupMenu.show(button, 0, y);
             
 
@@ -54,7 +53,7 @@ public class MyButtonActions implements ActionListener {
             // 'screenshot' pressed
             Screenshots shot = new Screenshots();
             shot.takeScreenshot(window);
-            
+
         } else if (command == "screenshots") {
             System.out.println("Let's open the screenshot files!");
 
