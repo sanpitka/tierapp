@@ -41,7 +41,7 @@ public class MyButtonActions implements ActionListener {
             JButton button = (JButton) e.getSource();
             Dimension buttonSize = button.getSize();
             int y = buttonSize.height;
-            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 470));
+            popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
             
 
