@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 
 public class Screenshots {
 
@@ -25,8 +26,8 @@ public class Screenshots {
      * For every screenshot, an image button and the filename are shown.
      * @return A component that contains buttons to saved screenshots
      */
-    public Component showScreenshots() {
-        JPanel screenshots = new JPanel();
+    public JPopupMenu showScreenshots() {
+        JPopupMenu screenshots = new JPopupMenu();
         screenshots.setPreferredSize(new Dimension(570, 600));
         screenshots.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
         screenshots.setBackground(new Color(184, 184, 184));
