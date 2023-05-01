@@ -55,12 +55,14 @@ public class MyButtonActions implements ActionListener {
             shot.takeScreenshot(window);
 
         } else if (command == "screenshots") {
-            System.out.println("Let's open the screenshot files!");
-
-            JPopupMenu screenshots = new Screenshots().showScreenshots();
+            JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
             screenshots.setName("screenshots");
             screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 478));
             screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 115);
+
+        } else if (command.startsWith("open")) {
+            Component openedShot = new Screenshots().openScreenshot(this.window, command);
+            openedShot.setVisible(true);
         
         } else if (command == "sidebarimport") {
             // TODO make this a splash screen, or get it to work otherwise
@@ -101,9 +103,12 @@ public class MyButtonActions implements ActionListener {
                 okmessage.setVisible(true);
             }
 
-            
+          
 
-        } else {
+        } else if (command == "back") {
+            System.out.println("Ikkunan pitäisi sulkeutua ja äsken avoinna olleen ikkunan avautua plz");
+
+        }  else {
             System.out.println("Unimplemented method " + command);
         }                
     }

@@ -7,13 +7,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 
 public class Screenshots {
 
@@ -26,7 +20,7 @@ public class Screenshots {
      * For every screenshot, an image button and the filename are shown.
      * @return A component that contains buttons to saved screenshots
      */
-    public JPopupMenu showScreenshots() {
+    public JPopupMenu showScreenshots(JFrame window) {
         JPopupMenu screenshots = new JPopupMenu();
         screenshots.setPreferredSize(new Dimension(570, 600));
         screenshots.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
@@ -48,6 +42,7 @@ public class Screenshots {
                     JButton button = new JButton(icon);
                     button.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
                     button.addActionListener(new MyButtonActions(window));
+                    button.setActionCommand("open " + imgFile.getName());
                     JLabel label = new JLabel(filename, JLabel.CENTER);
 
                     oneShot.add(button, BorderLayout.CENTER);
@@ -94,7 +89,51 @@ public class Screenshots {
         return filename;
     }
 
-    public static void open() {
-        System.out.println("Avataanpa!");
+    public Component openScreenshot(JFrame dialogOwner, String dialogText) {
+        String filename = dialogText.replace("open ", "");
+        System.out.println("Aukaistaan " + filename);
+        File image = new File("Screenshots/" + filename);
+
+        JDialog openedShot = new JDialog();
+        openedShot.setUndecorated(true); // remove title bar
+        openedShot.setMinimumSize(new Dimension(600, 200));
+        openedShot.setMaximumSize(new Dimension(600, 500));
+        openedShot.setLayout(new BorderLayout());
+        openedShot.getContentPane().setBackground(Color.LIGHT_GRAY);
+        openedShot.setForeground(Color.BLACK);
+        openedShot.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        openedShot.setLocationRelativeTo(dialogOwner);
+
+        // set window text and picture
+        try {
+            JPanel imgPanel = new JPanel();
+            JLabel textLabel = new JLabel(filename);
+            BufferedImage img;
+            img = ImageIO.read(image);
+            Image smallerImg = img.getScaledInstance(450, 320, Image.SCALE_DEFAULT);
+            ImageIcon icon = new ImageIcon(smallerImg);
+            JLabel imgLabel = new JLabel(icon);
+            imgPanel.add(imgLabel);
+            openedShot.add(textLabel, BorderLayout.NORTH);
+            openedShot.add(imgPanel, BorderLayout.WEST);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // add buttons
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 50, 50));
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        JButton shareButton = new MyButtons(window).setDialogButton("Share", "share");
+        JButton deleteButton = new MyButtons(window).setDialogButton("Delete", "delete");
+        JButton backButton = new MyButtons(window).setDialogButton("Back", "back");
+        buttonPanel.add(shareButton);
+        buttonPanel.add(deleteButton);
+        buttonPanel.add(backButton);
+        openedShot.add(buttonPanel, BorderLayout.CENTER);
+
+        openedShot.pack();
+
+        return openedShot;
     }
+
 }
