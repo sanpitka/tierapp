@@ -3,6 +3,7 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -23,20 +24,61 @@ public class MyButtonActions implements ActionListener {
         this.window = window;
     }
 
+    /**
+     * All the button actions of this application in alfabethical order.
+     * Invoked when action occurs.
+     * 
+     * @param e the event to be processed
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         
         // TODO add button actions here
         String command = e.getActionCommand();
 
-        if (command == "menu") {
+        if (command == "close") {
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
 
-            // menu button pressed
+
+        } else if (command.startsWith("delete")) {
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            Boolean deleted = new Screenshots().delete(dialog, command);
+            if (deleted) {
+                dialog.dispose();
+            }
+        
+        } else if (command == "import") {
+            // 'import button' pressed
+            System.out.println(command + " pressed.");
+            
+            // import chosen topics
+            JSONArray importList = StartWindow.getSelectionList();
+            StartWindow.clearSelectionList();
+            
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
+            
+            if (new RankLists().importTopics(importList)) {
+                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
+                okmessage.setVisible(true);
+            }
+
+        } else if (command == "importbutton") {
+            // 'sidemenu import' pressed
             System.out.println(command + " pressed.");
 
+            Component importdialog = new StartWindow().setImportWindow(this.window, "Custom topics to import");
+            importdialog.setVisible(true);
+            
+        }else if (command == "menu") {
+            
             JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
             popupMenu.setName("popupmenu");
-                    
+            
             // Get the menu button lower left corner coordinates for the sidebar menu
             JButton button = (JButton) e.getSource();
             Dimension buttonSize = button.getSize();
@@ -44,6 +86,9 @@ public class MyButtonActions implements ActionListener {
             popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
             
+        } else if (command.startsWith("open")) {
+            Component openedShot = new Screenshots().openScreenshot(this.window, command);
+            openedShot.setVisible(true);
 
         } else if (command == "rank") {
             // 'go rank' pressed
@@ -59,10 +104,6 @@ public class MyButtonActions implements ActionListener {
             screenshots.setName("screenshots");
             screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 478));
             screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 115);
-
-        } else if (command.startsWith("open")) {
-            Component openedShot = new Screenshots().openScreenshot(this.window, command);
-            openedShot.setVisible(true);
         
         } else if (command == "sidebarimport") {
             // TODO make this a splash screen, or get it to work otherwise
@@ -77,36 +118,6 @@ public class MyButtonActions implements ActionListener {
             Component importmessage = new StartWindow().setDialogueWindow(this.window, dialogtext, buttonlabels, buttonactions, 0);
             importmessage.setName("importmessage");
             importmessage.setVisible(true);
-
-        } else if (command == "importbutton") {
-            // 'sidemenu import' pressed
-            System.out.println(command + " pressed.");
-
-            Component importdialog = new StartWindow().setImportWindow(this.window, "Custom topics to import");
-            importdialog.setVisible(true);
-
-
-        } else if (command == "import") {
-            // 'import button' pressed
-            System.out.println(command + " pressed.");
-
-            // import chosen topics
-            JSONArray importList = StartWindow.getSelectionList();
-            StartWindow.clearSelectionList();
-
-            Component source = (Component) e.getSource();
-            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
-            dialog.dispose();
-
-            if (new RankLists().importTopics(importList)) {
-                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
-                okmessage.setVisible(true);
-            }
-
-          
-
-        } else if (command == "back") {
-            System.out.println("Ikkunan pitäisi sulkeutua ja äsken avoinna olleen ikkunan avautua plz");
 
         }  else {
             System.out.println("Unimplemented method " + command);

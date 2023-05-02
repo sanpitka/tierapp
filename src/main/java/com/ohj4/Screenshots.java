@@ -91,7 +91,6 @@ public class Screenshots {
 
     public Component openScreenshot(JFrame dialogOwner, String dialogText) {
         String filename = dialogText.replace("open ", "");
-        System.out.println("Aukaistaan " + filename);
         File image = new File("Screenshots/" + filename);
 
         JDialog openedShot = new JDialog();
@@ -124,8 +123,8 @@ public class Screenshots {
         JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 50, 50));
         buttonPanel.setBackground(Color.LIGHT_GRAY);
         JButton shareButton = new MyButtons(window).setDialogButton("Share", "share");
-        JButton deleteButton = new MyButtons(window).setDialogButton("Delete", "delete");
-        JButton backButton = new MyButtons(window).setDialogButton("Back", "back");
+        JButton deleteButton = new MyButtons(window).setDialogButton("Delete", "delete " + filename);
+        JButton backButton = new MyButtons(window).setDialogButton("Close", "close");
         buttonPanel.add(shareButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(backButton);
@@ -134,6 +133,27 @@ public class Screenshots {
         openedShot.pack();
 
         return openedShot;
+    }
+
+    public Boolean delete(JDialog dialog, String filename){
+        filename = filename.replace("delete ", "");
+        File file = new File("Screenshots/" + filename);
+            if (file.exists()) {
+                int option = JOptionPane.showConfirmDialog(dialog, "Are you sure you want to delete " + filename +"?", "Confirmation", JOptionPane.YES_NO_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    if (file.delete()) {
+                        JOptionPane.showMessageDialog(dialog, "File deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        return true;
+                    } else {
+                        JOptionPane.showMessageDialog(dialog, "Failed to delete file.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return false;
+                    }
+                }
+            } else {
+                JOptionPane.showMessageDialog(dialog, "File does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
+                return true;
+            }
+        return false;
     }
 
 }
