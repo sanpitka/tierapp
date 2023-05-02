@@ -21,10 +21,14 @@ public class Screenshots {
      * @return A component that contains buttons to saved screenshots
      */
     public JPopupMenu showScreenshots(JFrame window) {
+
+        //TODO: Jos jää aikaa, lisää reunaan scrollpane niin että shotit näkyy vaikka niitä olisi enemmän kuin
+        //ruudulle mahtuu.
         JPopupMenu screenshots = new JPopupMenu();
         screenshots.setPreferredSize(new Dimension(570, 600));
         screenshots.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
         screenshots.setBackground(new Color(184, 184, 184));
+
         File screenshotDir = new File("Screenshots");
         if (screenshotDir.isDirectory()) {
             for (File imgFile : screenshotDir.listFiles()) {
@@ -56,6 +60,10 @@ public class Screenshots {
         return screenshots;
     }
 
+    /**
+     * Takes a screenshot of the list that is showing on the screen.
+     * @param window the main window of the application
+     */
     public void takeScreenshot(JFrame window) {
         Point upleft = window.getLocationOnScreen();
 
@@ -67,10 +75,11 @@ public class Screenshots {
         try {
             BufferedImage screenshot = new Robot().createScreenCapture(rectangle);
             ImageIO.write(screenshot, "png", new File("Screenshots/" + setFilename()));
-            Component ssMessage = new StartWindow().setDialogueWindow(window, "Screenhot taken!", null, null, 1);
+            Component ssMessage = new StartWindow().setDialogueWindow(window, "<html>" + "Screenshot saved" + 
+                "<br>" + "to the Screenshots folder!" + "</html>", null, null, 1);
             ssMessage.setVisible(true);
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
+            JOptionPane.showMessageDialog(window, "There was an exception, try again later.", "Error", JOptionPane.ERROR_MESSAGE);
             e1.printStackTrace();
         }
     }
@@ -94,10 +103,10 @@ public class Screenshots {
     }
 
     /**
-     * Opens a screenshot for view. Lets the user share or delete screenshot.
+     * Open a screenshot for view. Let the user share or delete screenshot.
      * @param dialogOwner the application window
      * @param filename open command with the name of the file 
-     * @return JDialog window with image and Share, Delete and Close buttons
+     * @return JDialog window with image and Delete and Close buttons
      */
     public Component openScreenshot(JFrame dialogOwner, String filename) {
         filename = filename.replace("open ", "");
@@ -106,8 +115,8 @@ public class Screenshots {
         //Create a new JDialog panel
         JDialog openedShot = new JDialog();
         openedShot.setUndecorated(true); // remove title bar
-        openedShot.setMinimumSize(new Dimension(600, 200));
-        openedShot.setMaximumSize(new Dimension(600, 500));
+        openedShot.setMinimumSize(new Dimension(450, 200));
+        openedShot.setMaximumSize(new Dimension(450, 500));
         openedShot.setLayout(new BorderLayout());
         openedShot.getContentPane().setBackground(Color.LIGHT_GRAY);
         openedShot.setForeground(Color.BLACK);
@@ -127,19 +136,18 @@ public class Screenshots {
             openedShot.add(textLabel, BorderLayout.NORTH);
             openedShot.add(imgPanel, BorderLayout.WEST);
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(dialogOwner, "There was an error in I/O.", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
         // add buttons
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 50, 50));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
         buttonPanel.setBackground(Color.LIGHT_GRAY);
-        JButton shareButton = new MyButtons(window).setDialogButton("Share", "share");
         JButton deleteButton = new MyButtons(window).setDialogButton("Delete", "delete " + filename);
         JButton backButton = new MyButtons(window).setDialogButton("Close", "close");
-        buttonPanel.add(shareButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(backButton);
-        openedShot.add(buttonPanel, BorderLayout.CENTER);
+        openedShot.add(buttonPanel, BorderLayout.SOUTH);
 
         openedShot.pack();
 
@@ -147,7 +155,7 @@ public class Screenshots {
     }
 
     /**
-     * Deletes a file
+     * Delete a chosen screenshot file
      * @param dialog the current JDialog panel
      * @param filename delete command and the name of the file that will be deleted
      * @return true if deletion succeeded or file does not exist
@@ -172,5 +180,6 @@ public class Screenshots {
             }
         return false;
     }
+
 
 }

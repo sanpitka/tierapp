@@ -33,7 +33,6 @@ public class MyButtonActions implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        // TODO add button actions here
         String command = e.getActionCommand();
 
         if (command == "close") {
@@ -49,6 +48,7 @@ public class MyButtonActions implements ActionListener {
             if (deleted) {
                 dialog.dispose();
             }
+            //TODO: Jos jää aikaa, palaa Screenshots-ikkunaan!
         
         } else if (command == "import") {
             // 'import button' pressed
@@ -96,8 +96,7 @@ public class MyButtonActions implements ActionListener {
 
         } else if (command == "screenshot") {
             // 'screenshot' pressed
-            Screenshots shot = new Screenshots();
-            shot.takeScreenshot(window);
+            new Screenshots().takeScreenshot(window);
 
         } else if (command == "screenshots") {
             JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
