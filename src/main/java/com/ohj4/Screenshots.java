@@ -75,8 +75,12 @@ public class Screenshots {
         }
     }
 
+    /**
+     * Set filename of the screenshot to the list name given by user. If the user has not
+     * changed the list name, set filename to capture+datetime.
+     * @return filename
+     */
     public String setFilename() {
-        //If the user has not changed the list name, set filename to capture+datetime
         if (filename == null || filename.startsWith("capture")) {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyMMddHHmmss");
             LocalDateTime ldt = LocalDateTime.now();
@@ -89,10 +93,17 @@ public class Screenshots {
         return filename;
     }
 
-    public Component openScreenshot(JFrame dialogOwner, String dialogText) {
-        String filename = dialogText.replace("open ", "");
+    /**
+     * Opens a screenshot for view. Lets the user share or delete screenshot.
+     * @param dialogOwner the application window
+     * @param filename open command with the name of the file 
+     * @return JDialog window with image and Share, Delete and Close buttons
+     */
+    public Component openScreenshot(JFrame dialogOwner, String filename) {
+        filename = filename.replace("open ", "");
         File image = new File("Screenshots/" + filename);
 
+        //Create a new JDialog panel
         JDialog openedShot = new JDialog();
         openedShot.setUndecorated(true); // remove title bar
         openedShot.setMinimumSize(new Dimension(600, 200));
@@ -135,6 +146,12 @@ public class Screenshots {
         return openedShot;
     }
 
+    /**
+     * Deletes a file
+     * @param dialog the current JDialog panel
+     * @param filename delete command and the name of the file that will be deleted
+     * @return true if deletion succeeded or file does not exist
+     */
     public Boolean delete(JDialog dialog, String filename){
         filename = filename.replace("delete ", "");
         File file = new File("Screenshots/" + filename);
