@@ -1,10 +1,33 @@
 package com.ohj4;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -223,6 +246,7 @@ public class RankLists {
 
     // TODO set topic icon and logo
     private void setTopicLogo() {
+        
 
     }
 
@@ -310,5 +334,114 @@ public class RankLists {
         }
 
         return false;
+    }
+
+    /**
+     * Opens a window that shows a list of theme icons and names and lets user choose a new topic to rank. 
+     * @param window the main
+     * @return topic selection window
+     */
+    public JDialog selectTopic(JFrame window) {
+
+        //Create a topic selection window on the main frame
+        JDialog topicSelection = new JDialog();
+        topicSelection.setUndecorated(true); // remove title bar
+        topicSelection.setMinimumSize(new Dimension(500, 400));
+        topicSelection.setMaximumSize(new Dimension(500, 400));
+        topicSelection.setLayout(new FlowLayout());
+        topicSelection.getContentPane().setBackground(Color.LIGHT_GRAY);
+        topicSelection.setForeground(Color.BLACK);
+        topicSelection.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        topicSelection.setLocationRelativeTo(window);
+
+        //Create a 
+        JPanel titlePanel = new JPanel();
+        titlePanel.setBackground(Color.LIGHT_GRAY);
+        JLabel titleLabel = new JLabel("Choose a topic you want to rank");
+        titleLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        titlePanel.add(titleLabel);
+
+        JPanel selectionPanel = new JPanel();
+        selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
+        selectionPanel.setBackground(Color.LIGHT_GRAY);
+
+        File topicsFolder = new File("topics");
+        if (topicsFolder.isDirectory()) {
+            for (File folder : topicsFolder.listFiles()) {
+                if (folder.isDirectory()) {
+                    String topicName = folder.getName();
+                    String imgNamePng = topicName + ".png";
+                    String imgNameJpg = topicName + ".jpg";
+                    File imgFile = new File(folder + "/" +imgNamePng);
+                    if (!imgFile.exists()) {
+                        imgFile = new File(folder + "/" +imgNameJpg);
+                    }
+                    if (!imgFile.exists()) {
+                        //If there is no topic image, create one.
+                        BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
+                        Graphics2D g2d = newImage.createGraphics();
+                        g2d.setColor(Color.WHITE);
+                        g2d.fillRect(0, 0, 130, 80);
+                        g2d.dispose();
+                        g2d = newImage.createGraphics();
+                        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+                        g2d.setColor(Color.BLACK);
+                        g2d.drawString(topicName, 5, 45);
+                        g2d.dispose();
+                        imgFile = new File(folder + "/" +imgNameJpg);
+                        try {
+                            ImageIO.write(newImage, "jpg", imgFile);
+                        } catch (Exception e) {
+                            //TODO: ei mitään printtailuja, joku parempi virhekoodi
+                            System.out.println("Error: " + e.getMessage());
+                        }
+                    }
+                    JPanel row = new JPanel(new BorderLayout());
+                    try {
+                        BufferedImage topicImage = ImageIO.read(imgFile);
+                        Image scaledImg = topicImage.getScaledInstance(100, 80, 0);
+                        JLabel imgLabel = new JLabel(new ImageIcon(scaledImg));
+                        String labeltext = folder.getName();
+                        labeltext = labeltext.replace("topics/", "");
+                        JLabel txtLabel = new JLabel(labeltext);
+                        txtLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+                        txtLabel.setBorder(new EmptyBorder(0, 10, 0, 10));
+
+                        row.add(imgLabel, BorderLayout.WEST);
+                        row.add(txtLabel, BorderLayout.CENTER);
+                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + folder), BorderLayout.EAST);
+                        row.setBorder(BorderFactory.createLineBorder(Color.black));
+
+                        selectionPanel.add(row);
+
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+
+                }
+            }
+        }
+        // add a scrollbar for easier browsing
+        JScrollPane scrollPane = new JScrollPane(selectionPanel);
+        scrollPane.setPreferredSize(new Dimension(450, 300));
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+
+        topicSelection.add(titlePanel);
+        topicSelection.add(scrollPane);
+
+        // add a cancel button
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        buttonPanel.setBackground(Color.LIGHT_GRAY);
+        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "close"), BorderLayout.EAST);
+        topicSelection.add(buttonPanel);
+
+        return topicSelection;
+    }
+
+    public boolean startNewRank(JFrame window) {
+        //TODO: Kysy lupa uuden rankingin aloittamiseen
+        return true;
     }
 }

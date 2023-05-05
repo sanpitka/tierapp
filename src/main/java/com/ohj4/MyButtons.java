@@ -2,6 +2,7 @@ package com.ohj4;
 
 import java.awt.Color;
 import java.awt.Font;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -53,6 +54,7 @@ public class MyButtons extends JPanel {
         newButton.setFont(new Font("Arial", Font.PLAIN, 20));
         newButton.setBackground(Color.LIGHT_GRAY);
         newButton.setForeground(Color.BLACK);
+        newButton.setFocusPainted(false);
         newButton.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(Color.BLACK),
             BorderFactory.createEmptyBorder(5,10,5,10)

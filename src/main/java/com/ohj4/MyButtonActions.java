@@ -3,7 +3,6 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -34,6 +33,10 @@ public class MyButtonActions implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         
         String command = e.getActionCommand();
+
+        if (command.startsWith("choose")) {
+            
+        }
 
         if (command == "close") {
             Component source = (Component) e.getSource();
@@ -73,7 +76,7 @@ public class MyButtonActions implements ActionListener {
 
             Component importdialog = new StartWindow().setImportWindow(this.window, "Custom topics to import");
             importdialog.setVisible(true);
-            
+        
         }else if (command == "menu") {
             
             JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
@@ -85,6 +88,15 @@ public class MyButtonActions implements ActionListener {
             int y = buttonSize.height;
             popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
+
+        } else if (command == "new") {
+            if (new RankLists().startNewRank(window)){
+                JDialog topicSelection = new RankLists().selectTopic(this.window);
+                topicSelection.setName("selection");
+                topicSelection.setVisible(true);
+            }
+            
+    
             
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(this.window, command);
@@ -93,6 +105,7 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "rank") {
             // 'go rank' pressed
             System.out.println(command + " pressed.");
+
 
         } else if (command == "screenshot") {
             // 'screenshot' pressed

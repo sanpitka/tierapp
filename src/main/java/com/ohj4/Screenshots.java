@@ -22,12 +22,12 @@ public class Screenshots {
      */
     public JPopupMenu showScreenshots(JFrame window) {
 
-        //TODO: Jos jää aikaa, lisää reunaan scrollpane niin että shotit näkyy vaikka niitä olisi enemmän kuin
-        //ruudulle mahtuu.
-        JPopupMenu screenshots = new JPopupMenu();
-        screenshots.setPreferredSize(new Dimension(570, 600));
-        screenshots.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
-        screenshots.setBackground(new Color(184, 184, 184));
+        JPopupMenu screenshotsMenu = new JPopupMenu();
+
+        JPanel screenshotsPanel = new JPanel();
+        screenshotsPanel.setPreferredSize(new Dimension(570, 600));
+        screenshotsPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
+        screenshotsPanel.setBackground(new Color(184, 184, 184));
 
         File screenshotDir = new File("Screenshots");
         if (screenshotDir.isDirectory()) {
@@ -51,13 +51,19 @@ public class Screenshots {
 
                     oneShot.add(button, BorderLayout.CENTER);
                     oneShot.add(label, BorderLayout.SOUTH);
-                    screenshots.add(oneShot);
+                    screenshotsPanel.add(oneShot);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
-        return screenshots;
+        JScrollPane scrollPane = new JScrollPane(screenshotsPanel);
+        scrollPane.setPreferredSize(new Dimension(570, 600));
+        scrollPane.setBackground(Color.LIGHT_GRAY);
+
+        screenshotsMenu.add(scrollPane);
+
+        return screenshotsMenu;
     }
 
     /**
