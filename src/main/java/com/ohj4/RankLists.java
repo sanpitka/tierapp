@@ -8,37 +8,51 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.gson.JsonArray;
+
 /**
  * Contains all the logic in getting ranking topics and ranking pictures of a specific topic.
- * Sends information to graphical components to display.
+ * 
  */
 public class RankLists {
+
+    private JSONArray rankingResults = new JSONArray();
+    private int index = 0;
     
     public JSONArray getTopicList() {
 
+        // TODO no need for this 
+        /* 
         JSONArray topicList = new JSONArray();
         String topicListPath = "topics.json";
         
@@ -63,12 +77,17 @@ public class RankLists {
             System.out.println("Error getting topics.json list: " + e);
         }
         return topicList;
+
+        */
+        return null;
     }
 
     public JSONArray getImportTopics() {
         
+        // TODO remake this to add topic from user set files
+
         JSONArray importList = new JSONArray(); // list of topics that are new
-        JSONArray topicList = new JSONArray(); // list of topics that exist in the list
+        /* JSONArray topicList = new JSONArray(); // list of topics that exist in the list
         String folderpath = "topics/";
         String topicListPath = "topics.json";
         File folder = new File(folderpath);
@@ -153,76 +172,50 @@ public class RankLists {
             // TODO make this an error dialog for the user
             System.out.print("Error in topics folder or list: ");
             e.printStackTrace();
-        }
+        } */
 
         return importList;
     }
 
     public boolean importTopics(JSONArray importList) {
 
-        String topicListPath = "topics.json";
+        // TODO remake this to get files from user and copy them to topics folder
 
-        try {
-
-            if (importList != null) {
-
-                JSONArray topicList = getTopicList();
-
-                for (int i = 0; i < importList.length(); i++) {
-                    JSONObject topic = setNewTopic(importList.getString(i));
-                    topicList.put(topic);
-                }
-
-                // update topics.json file
-                FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                fileOutputStream.write(topicList.toString().getBytes());
-                fileOutputStream.close();
-                return true;
-            }
-            return false;
-
-        } catch (Exception e) {
-            System.out.println("Error importing topics " + e);
-            return false;
-        }
+        
+        return false;
+        
     }
     
     /**
-     * The function creates a new JSON object representing a topic and adds its name and files to it,
-     * creating a new folder for the topic if it doesn't already exist.
+     * The function creates a new JSON object representing a topic and adds its files to it.
      * 
-     * @param topicname A string representing the name of the new topic to be created.
+     * @param topicname A string representing the name of the topic to be created.
      * @return A JSONObject containing information about a new topic, including its name and a
      * JSONArray of files associated with it. If the topic folder does not exist, it will be created.
      * If there is an error opening the topics folder, null will be returned.
      */
-    public JSONObject setNewTopic(String topicname) {
-        JSONObject newTopic = new JSONObject();
-        String folderpath = "topics/" + topicname + "/";
+    public JSONArray getRankingTopic(String topicpath) {
+        
+        JSONArray newTopic = new JSONArray();
+        String folderpath = topicpath + "/";
         File topicfolder = new File(folderpath);
 
-        newTopic.put("name", topicname);
-
         // search for files in the topic path
-        try {
-
-            if (!topicfolder.exists()) {
-                // no folder for topic found, create the folder
-                topicfolder.mkdir();
-            }
-            
+        try { 
             if (topicfolder.exists() && topicfolder.isDirectory()) {
 
                 File[] filenames = topicfolder.listFiles();
-                JSONArray files = new JSONArray();
 
-                // add all filenames to the topic file array
-                for (File file: filenames) {
-                    files.put(file.getName());
+                // add all filenames to the topic array
+                for (File filename: filenames) {
+                    // validate that the file is jp(e)g or png first, then add to list
+                    if (validatePicture(filename.getPath())) {
+                        JSONObject file = new JSONObject();
+                        file.put("name", filename.getPath().replaceAll("\\\\", "/"));
+                        file.put("rank", "");
+                        newTopic.put(file);
+                    }
                 }
-
-                newTopic.put("files", files);
-
             }
 
         } catch (Exception e) {
@@ -234,106 +227,30 @@ public class RankLists {
 
     }
 
-    // TODO set topic ranking
-    private void setTopicRanking() {
-
-    }
-
-    // TODO get topic ranking
-    public void getTopicRanking() {
-
-    }
-
-    // TODO set topic icon and logo
-    private void setTopicLogo() {
-        
-
-    }
-
-    // TODO check pictures
-    private boolean validatePicture() {
-
-        return false;
-    }
-
     /**
-     * The function removes non-existent files from a topic.
+     * The function validates if a file path is a PNG or JPEG image.
      * 
-     * @param topic A JSONObject representing a topic, which contains a name (String) and an array of
-     * files (JSONArray).
-     * @return the cleaned topic object.
+     * @param filePathToTest The file path of the picture that needs to be validated.
+     * @return The method is returning a boolean value, either true or false, depending on whether the
+     * file at the given file path is a PNG or JPEG image. If the file is not an image or is of a
+     * different image format, the method returns false.
      */
-    private JSONObject cleanFileList(JSONObject topic) {
+    private boolean validatePicture(String filePathToTest) throws IOException {
 
-        String folderpath = "topics/" + topic.getString("name") + "/";
-        JSONArray filelist = topic.getJSONArray("files"); 
-        
-        if (filelist != null && filelist.length() > 0) {
+        Path path = Paths.get(filePathToTest);
+        String mimeType = Files.probeContentType(path);
 
-            for (int i = 0; i < filelist.length(); i++) {
-                String filename = filelist.get(i).toString();
-                String filepath = folderpath + filename;
-                File file = new File(filepath);
-
-                if (!file.exists()) {
-                    filelist.remove(i);
-                }
+        if (mimeType != null) {
+            if (mimeType.equals("image/png")) {
+                return true;
+            } else if (mimeType.equals("image/jpeg")) {
+                return true;
+            } else {
+                return false;
             }
-        }
-
-        return topic;
-    }
-
-/**
- * The function searches for a JSONObject within a JSONArray based on a matching "name" value.
- * 
- * @param topiclist a list of previously imported topics.
- * @param topic the topic to be searched in the topic list
- * @return returns the found topic if it finds a matching object in the topic list, otherwise returns `null`.
- */
-    private JSONObject searchForObject(JSONArray topiclist, JSONObject topic) {
-
-        for (int i = 0; i < topiclist.length(); i++) {
-
-            JSONObject tempObject = topiclist.getJSONObject(i);
-            String value = tempObject.getString("name");
-
-            if (value.equalsIgnoreCase(topic.getString("name"))) {
-                tempObject.put("index", i);
-                return tempObject;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * The function searches for a specific file in a topic, and returns true if found, otherwise
-     * returns false. If there is no file list in the topic, create one and return false.
-     * 
-     * @param topic A JSONObject representing a topic, which may or may not have a list of files
-     * associated with it.
-     * @param filename The name of the file that we are searching for in the JSON object.
-     * @return The method returns a boolean value, either true or false.
-     */
-    private boolean searchForFile(JSONObject topic, String filename) {
-
-        if (topic.has("files")) {
-
-            JSONArray files = topic.getJSONArray("files");
-
-            for (int i = 0; i < files.length(); i++) {
-                if (files.getString(i).equalsIgnoreCase(filename)) {
-                    return true;
-                }
-            }
-
         } else {
-            // topic has no file list
-            topic.put("files", new JSONArray());
+            return false;
         }
-
-        return false;
     }
 
     /**
@@ -443,5 +360,166 @@ public class RankLists {
     public boolean startNewRank(JFrame window) {
         //TODO: Kysy lupa uuden rankingin aloittamiseen
         return true;
+    }
+
+    public JDialog rankPictures (JFrame window, String topicPath) {
+
+        JDialog rankWindow = new JDialog();
+        rankWindow.setUndecorated(true); // remove title bar
+        rankWindow.setMinimumSize(new Dimension(600, 500));
+        rankWindow.setMaximumSize(new Dimension(600, 600));
+        rankWindow.setLayout(new BorderLayout(5, 5));
+        rankWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
+        rankWindow.setForeground(Color.BLACK);
+        rankWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        rankWindow.setLocationRelativeTo(window);
+
+        // get selected topic folder content
+        JSONArray topicArray = getRankingTopic(topicPath);
+
+        if (topicArray != null && topicArray.length() > 0) {
+
+            // display first picture to rank
+            String filename = topicArray.getJSONObject(index).getString("name");
+            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
+
+            JLabel pictureLabel = new JLabel(currentPicture);
+            rankWindow.add(pictureLabel, BorderLayout.NORTH);
+
+            // display ranking letters
+            JPanel buttonRow = new JPanel();
+            buttonRow.setLayout(new GridLayout(1,7));
+            buttonRow.setPreferredSize(new Dimension(600,130));
+            buttonRow.setBackground(Color.WHITE);
+            rankWindow.add(buttonRow, BorderLayout.SOUTH);
+            JSONArray labels = createLabelList();
+
+            // create buttons individually to add ActionListener
+            for (int i = 0; i < labels.length(); i++) { 
+                JButton button = createRankButton(labels.getJSONObject(i).getString("rank"), Color.decode(labels.getJSONObject(i).getString("color")));
+                buttonRow.add(button);
+                button.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent b) {
+
+                        // record ranking for current picture
+                        String ranking = ((JButton) b.getSource()).getText();
+                        topicArray.getJSONObject(index).put("rank", ranking);
+                        rankingResults.put(topicArray.getJSONObject(index));
+                        System.out.println(rankingResults);
+                        
+                        // move to next picture
+                        index++;
+
+                        if (index < topicArray.length()) {
+                            // destroy pictureLabel from previous picture
+                            rankWindow.remove(pictureLabel);
+
+                            // create new picture and add it to the rankWindow
+                            String filename = topicArray.getJSONObject(index).getString("name");
+                            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
+                            JLabel pictureLabel = new JLabel(currentPicture);
+                            rankWindow.add(pictureLabel, BorderLayout.CENTER);
+                            
+                            rankWindow.revalidate();
+                            rankWindow.repaint();
+                        } else {
+                            // end of ranking, close rankWindow
+                            index = 0;
+                            rankWindow.dispose();
+                        }
+                    }
+                });
+
+                }
+            }
+        
+        
+        return rankWindow;
+    }
+
+    private JButton createRankButton(String label, Color backgroundColor) {
+        JButton newButton = new JButton(label);
+        Font buttonFont = new Font("Arial", Font.PLAIN, 40);
+        newButton.setForeground(Color.WHITE);
+        newButton.setBackground(backgroundColor);
+        newButton.setFont(buttonFont);
+        newButton.setBorder(BorderFactory.createEmptyBorder(7,20,20,20));
+        newButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        newButton.setVerticalTextPosition(SwingConstants.CENTER);
+
+        // Add an ActionListener to the button
+        newButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Perform some action when the button is clicked
+                String actionCommand = e.getActionCommand();
+                System.out.println("Button clicked: " + actionCommand);
+            }
+        });
+        
+        // Set the action command of the button to its label
+        newButton.setActionCommand(label);
+
+        return newButton;
+    }
+
+    private Image displayPicture(String filepath) {
+
+        try {
+            File file = new File(filepath);
+
+            if (file.exists() && !file.isDirectory()) {
+
+                Image picture = ImageIO.read(file);
+                return picture;
+
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private JSONArray createLabelList() {
+
+        JSONArray labels = new JSONArray();
+        JSONObject label1 = new JSONObject();
+        label1.put("color", "#dc2828");
+        label1.put("rank", "S");
+        labels.put(label1);
+
+        JSONObject label2 = new JSONObject();
+        label2.put("color", "#bf5d16");
+        label2.put("rank", "A");
+        labels.put(label2);
+
+        JSONObject label3 = new JSONObject();
+        label3.put("color", "#beb34d");
+        label3.put("rank", "B");
+        labels.put(label3);
+
+        JSONObject label4 = new JSONObject();
+        label4.put("color", "#7d8e72");
+        label4.put("rank", "C");
+        labels.put(label4);
+
+        JSONObject label5 = new JSONObject();
+        label5.put("color", "#719ca1");
+        label5.put("rank", "D");
+        labels.put(label5);
+
+        JSONObject label6 = new JSONObject();
+        label6.put("color", "#7382a8");
+        label6.put("rank", "E");
+        labels.put(label6);
+
+        JSONObject label7 = new JSONObject();
+        label7.put("color", "#ae7cb6");
+        label7.put("rank", "F");
+        labels.put(label7);
+
+        return labels;
     }
 }

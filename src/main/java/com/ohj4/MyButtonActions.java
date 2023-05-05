@@ -24,7 +24,7 @@ public class MyButtonActions implements ActionListener {
     }
 
     /**
-     * All the button actions of this application in alfabethical order.
+     * All the button actions of this application in alfabetical order.
      * Invoked when action occurs.
      * 
      * @param e the event to be processed
@@ -34,15 +34,17 @@ public class MyButtonActions implements ActionListener {
         
         String command = e.getActionCommand();
 
-        if (command.startsWith("choose")) {
+        if (command.startsWith("choose ")) {
             
-        }
+            String target = command.replace("choose ", "");
+            JDialog rankWindow = new RankLists().rankPictures(window,target);
+            rankWindow.setVisible(true);
 
-        if (command == "close") {
+        } else if (command == "close") {
+
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
-
 
         } else if (command.startsWith("delete")) {
             Component source = (Component) e.getSource();
@@ -90,13 +92,12 @@ public class MyButtonActions implements ActionListener {
             popupMenu.show(button, 0, y);
 
         } else if (command == "new") {
+
             if (new RankLists().startNewRank(window)){
                 JDialog topicSelection = new RankLists().selectTopic(this.window);
                 topicSelection.setName("selection");
                 topicSelection.setVisible(true);
-            }
-            
-    
+            }  
             
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(this.window, command);
