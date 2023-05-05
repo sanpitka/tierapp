@@ -35,10 +35,14 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command.startsWith("choose")) {
-            
-        }
+            String category = command.replace("choose ", "");
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
+            new StartWindow().changeCategory(category);
+        
 
-        if (command == "close") {
+        } else if (command == "close") {
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
@@ -96,8 +100,6 @@ public class MyButtonActions implements ActionListener {
                 topicSelection.setVisible(true);
             }
             
-    
-            
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(this.window, command);
             openedShot.setVisible(true);
@@ -114,8 +116,8 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "screenshots") {
             JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
             screenshots.setName("screenshots");
-            screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 478));
-            screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 115);
+            screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 475));
+            screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 118);
         
         } else if (command == "sidebarimport") {
             // TODO make this a splash screen, or get it to work otherwise

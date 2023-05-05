@@ -3,11 +3,14 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +19,7 @@ import javax.swing.event.*;
 public class StartWindow implements Runnable {
 
     JFrame window;
+    static JLabel categoryLabel;
     private static JSONArray selectionChoices = new JSONArray();
 
     @Override
@@ -35,6 +39,9 @@ public class StartWindow implements Runnable {
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(true), BorderLayout.WEST);
         window.add(setRows(), BorderLayout.CENTER);
+        JDialog topicSelection = new RankLists().selectTopic(window);
+        topicSelection.setName("selection");
+        topicSelection.setVisible(true);
 
     }
 
@@ -88,6 +95,7 @@ public class StartWindow implements Runnable {
      */
     private Component setNorthPanel() {
         JPanel northPanel = new JPanel(new GridLayout());
+        northPanel.setPreferredSize(new Dimension(800, 90));
         JPanel northPanelLeft = new JPanel(new GridLayout());
         JPanel northPanelRight = new JPanel(new GridLayout());
         Color buttonPink = new Color(255, 196, 242);
@@ -119,9 +127,7 @@ public class StartWindow implements Runnable {
         JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
         
-        //TODO: Change the image icon according to the user's choice
-        ImageIcon category = new ImageIcon("Breakfast1.png");
-        JLabel categoryLabel = new JLabel(category);
+        categoryLabel = new JLabel();
         northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
@@ -247,9 +253,7 @@ public class StartWindow implements Runnable {
             buttonPanel.setBackground(Color.LIGHT_GRAY);
 
             for (int i = 0; i < buttonLabels.length; i++) {
-                
                 buttonPanel.add(new MyButtons(this.window).setDialogButton(buttonLabels[i], buttonActions[i]));
-
             }
             
             dialogWindow.add(buttonPanel);
@@ -485,6 +489,22 @@ public class StartWindow implements Runnable {
     // TODO set ranking dialog window
     public void setRankingWindow() {
 
+    }
+
+    public JLabel changeCategory(String categoryName) {
+
+        System.out.println(categoryName);
+        File image = new RankLists().setTopicImage(categoryName);
+        try {
+            Image img = ImageIO.read(image);
+            Image smallerImg = img.getScaledInstance(130, 90, Image.SCALE_DEFAULT);
+            ImageIcon icon = new ImageIcon(smallerImg);
+            categoryLabel.setIcon(icon);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return categoryLabel;
     }
 
 }

@@ -25,7 +25,7 @@ public class Screenshots {
         JPopupMenu screenshotsMenu = new JPopupMenu();
 
         JPanel screenshotsPanel = new JPanel();
-        screenshotsPanel.setPreferredSize(new Dimension(570, 600));
+        screenshotsPanel.setPreferredSize(new Dimension(570, 400));
         screenshotsPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
         screenshotsPanel.setBackground(new Color(184, 184, 184));
 

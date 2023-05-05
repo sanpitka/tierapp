@@ -6,13 +6,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -369,33 +367,7 @@ public class RankLists {
         if (topicsFolder.isDirectory()) {
             for (File folder : topicsFolder.listFiles()) {
                 if (folder.isDirectory()) {
-                    String topicName = folder.getName();
-                    String imgNamePng = topicName + ".png";
-                    String imgNameJpg = topicName + ".jpg";
-                    File imgFile = new File(folder + "/" +imgNamePng);
-                    if (!imgFile.exists()) {
-                        imgFile = new File(folder + "/" +imgNameJpg);
-                    }
-                    if (!imgFile.exists()) {
-                        //If there is no topic image, create one.
-                        BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
-                        Graphics2D g2d = newImage.createGraphics();
-                        g2d.setColor(Color.WHITE);
-                        g2d.fillRect(0, 0, 130, 80);
-                        g2d.dispose();
-                        g2d = newImage.createGraphics();
-                        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
-                        g2d.setColor(Color.BLACK);
-                        g2d.drawString(topicName, 5, 45);
-                        g2d.dispose();
-                        imgFile = new File(folder + "/" +imgNameJpg);
-                        try {
-                            ImageIO.write(newImage, "jpg", imgFile);
-                        } catch (Exception e) {
-                            //TODO: ei mitään printtailuja, joku parempi virhekoodi
-                            System.out.println("Error: " + e.getMessage());
-                        }
-                    }
+                    File imgFile = setTopicImage(folder.getName());
                     JPanel row = new JPanel(new BorderLayout());
                     try {
                         BufferedImage topicImage = ImageIO.read(imgFile);
@@ -409,7 +381,7 @@ public class RankLists {
 
                         row.add(imgLabel, BorderLayout.WEST);
                         row.add(txtLabel, BorderLayout.CENTER);
-                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + folder), BorderLayout.EAST);
+                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + labeltext), BorderLayout.EAST);
                         row.setBorder(BorderFactory.createLineBorder(Color.black));
 
                         selectionPanel.add(row);
@@ -438,6 +410,36 @@ public class RankLists {
         topicSelection.add(buttonPanel);
 
         return topicSelection;
+    }
+
+    public File setTopicImage(String topicName) {
+        String imgNamePng = topicName + ".png";
+        String imgNameJpg = topicName + ".jpg";
+        File imgFile = new File("topics/" + topicName + "/" +imgNamePng);
+        if (!imgFile.exists()) {
+            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+        }
+        if (!imgFile.exists()) {
+            //If there is no topic image, create one.
+            BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = newImage.createGraphics();
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, 130, 80);
+            g2d.dispose();
+            g2d = newImage.createGraphics();
+            g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+            g2d.setColor(Color.BLACK);
+            g2d.drawString(topicName, 5, 45);
+            g2d.dispose();
+            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+            try {
+                ImageIO.write(newImage, "jpg", imgFile);
+            } catch (Exception e) {
+                //TODO: ei mitään printtailuja, joku parempi virhekoodi
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+        return imgFile;
     }
 
     public boolean startNewRank(JFrame window) {
