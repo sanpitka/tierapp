@@ -65,18 +65,6 @@ public class MyButtonActions implements ActionListener {
             // 'import button' pressed
             System.out.println(command + " pressed.");
             
-            // import chosen topics
-            JSONArray importList = StartWindow.getSelectionList();
-            StartWindow.clearSelectionList();
-            
-            Component source = (Component) e.getSource();
-            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
-            dialog.dispose();
-            
-            if (new RankLists().importTopics(importList)) {
-                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
-                okmessage.setVisible(true);
-            }
 
         } else if (command == "importbutton") {
             // 'sidemenu import' pressed

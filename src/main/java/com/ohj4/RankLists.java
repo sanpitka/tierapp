@@ -12,15 +12,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.nio.channels.spi.SelectorProvider;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -38,8 +33,6 @@ import javax.swing.border.EmptyBorder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import com.google.gson.JsonArray;
-
 /**
  * Contains all the logic in getting ranking topics and ranking pictures of a specific topic.
  * 
@@ -50,142 +43,6 @@ public class RankLists {
     private int index = 0;
     private JLabel pictureLabel = new JLabel();
     
-    public JSONArray getTopicList() {
-
-        // TODO no need for this 
-        /* 
-        JSONArray topicList = new JSONArray();
-        String topicListPath = "topics.json";
-        
-        // get the content of "topics" folder
-        try {
-
-            File topicListFile = new File(topicListPath);
-                
-            if (!topicListFile.exists()) {
-                // if not found, create an new topics.json file with an empty JSONArray
-                FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                fileOutputStream.write(topicList.toString().getBytes());
-                fileOutputStream.close();
-            }
-
-            // read the topic list file content to JSONArray
-            String fileContent = Files.readString(Paths.get("topics.json"), StandardCharsets.UTF_8);
-            topicList = new JSONArray(fileContent); 
-
-        } catch (Exception e) {
-            // TODO make this an error dialog for the user
-            System.out.println("Error getting topics.json list: " + e);
-        }
-        return topicList;
-
-        */
-        return null;
-    }
-
-    public JSONArray getImportTopics() {
-        
-        // TODO remake this to add topic from user set files
-
-        JSONArray importList = new JSONArray(); // list of topics that are new
-        /* JSONArray topicList = new JSONArray(); // list of topics that exist in the list
-        String folderpath = "topics/";
-        String topicListPath = "topics.json";
-        File folder = new File(folderpath);
-        
-        try {
-            
-            if (folder.exists() && folder.isDirectory()) {
-                
-                File[] foldernames = folder.listFiles(); // get the content of "topics" folder
-                File topicListFile = new File(topicListPath); // get the topics.json-file
-                
-                if (!topicListFile.exists()) {
-                    // if not found, create an new topics.json file with an empty JSONArray
-                    FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                    fileOutputStream.write(new JSONArray().toString().getBytes());
-                    fileOutputStream.close();
-                }
-
-                // read the topic list file content to JSONArray
-                String fileContent = Files.readString(Paths.get(topicListPath), StandardCharsets.UTF_8);
-                topicList = new JSONArray(fileContent);
-
-                // compare the topics.json file with the 'topics/' folder content
-                for (File foldername: foldernames) {
-
-                    JSONObject topic = new JSONObject();
-                    topic.put("name", foldername.getName());
-
-                    // search the topic from the topic list file content
-                    JSONObject searchResult = searchForObject(topicList, topic);
-
-                    // topic was not found in the topic list file content, mark it in the importList
-                    if (searchResult == null) {
-                        importList.put(foldername.getName());
-                    }
-                    else {
-                        // topic was found, compare all the files in the topic folder to the topics.json.
-                        // if a file is new, import it automatically
-                        topic = searchResult;
-                        String topicpath = folderpath + foldername.getName() + "/";
-                        File topicfile = new File(topicpath);
-                        File[] topicfiles = topicfile.listFiles();
-
-                        if (topicfiles != null) {
-
-                            JSONArray fileList = topic.getJSONArray("files");
-
-                            for (File file: topicfiles) {                     
-                                if (!searchForFile(topic, file.getName())) {
-                                    fileList.put(file.getName());
-                                }
-                            }
-
-                            topic.put("files", fileList); // add new files to filelist
-
-                            // clean files that don't exist from the topics file list to prevent errors
-                            topic = cleanFileList(topic);
-
-                            // replace the topic object with the cleaned one.
-                            // index is added to the object when searchForObject()-method finds it in list
-                            int i = topic.getInt("index");
-                            topic.remove("index"); // it's now safe to remove the index
-                            topicList.getJSONObject(i).remove("index");
-                            topicList.put(i, topic);
-                        }
-
-                        // update topics.json file with the new files
-                        FileOutputStream fileOutputStream = new FileOutputStream(topicListPath);
-                        fileOutputStream.write(topicList.toString().getBytes());
-                        fileOutputStream.close();
-
-                    }
-
-                }
-            } else {
-                // no topics-folder found, create the folder
-                folder.mkdir();
-            }
-
-
-        } catch (Exception e) {
-            // TODO make this an error dialog for the user
-            System.out.print("Error in topics folder or list: ");
-            e.printStackTrace();
-        } */
-
-        return importList;
-    }
-
-    public boolean importTopics(JSONArray importList) {
-
-        // TODO remake this to get files from user and copy them to topics folder
-
-        
-        return false;
-        
-    }
     
     /**
      * The function creates a new JSON object representing a topic and adds its files to it.
@@ -376,6 +233,14 @@ public class RankLists {
         return true;
     }
 
+    /**
+     * Creates a dialog window for ranking pictures and allows the user to rank each
+     * picture using buttons.
+     * 
+     * @param window The JFrame window that the JDialog will be displayed on top of.
+     * @param topicPath The file path of the folder containing the pictures to be ranked.
+     * @return The method is returning a JDialog object.
+     */
     public JDialog rankPictures (JFrame window, String topicPath) {
 
         // get selected topic folder content
@@ -460,6 +325,13 @@ public class RankLists {
         
     }
 
+    /**
+     * Creates the labels for ranks as buttons in the ranking window.
+     * 
+     * @param label The text that will be displayed on the button.
+     * @param backgroundColor The background color of the button.
+     * @return A JButton object is being returned.
+     */
     private JButton createRankButton(String label, Color backgroundColor) {
         JButton newButton = new JButton(label);
         Font buttonFont = new Font("Arial", Font.PLAIN, 40);
@@ -476,6 +348,15 @@ public class RankLists {
         return newButton;
     }
 
+    /**
+     * This Java function reads an image file from a given filepath and returns the image as an object.
+     * 
+     * @param filepath The filepath parameter is a String that represents the path to the image file
+     * that needs to be displayed.
+     * @return The method is returning an Image object. If the file exists and is not a directory, it
+     * reads the image from the file and returns it. If the file does not exist or is a directory, it
+     * returns null. If an exception occurs, it also returns null.
+     */
     private Image displayPicture(String filepath) {
 
         try {
@@ -495,6 +376,12 @@ public class RankLists {
         }
     }
 
+    /**
+     * Helper method for creating label buttons.
+     * 
+     * @return The method `createLabelList()` returns a `JSONArray` object containing a list of
+     * `JSONObject` objects, each representing a label with a color and a rank.
+     */
     private JSONArray createLabelList() {
 
         JSONArray labels = new JSONArray();

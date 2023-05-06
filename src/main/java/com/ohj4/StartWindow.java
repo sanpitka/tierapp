@@ -11,6 +11,9 @@ import javax.swing.BorderFactory;
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import com.google.gson.JsonArray;
+
 import javax.swing.event.*;
 
 public class StartWindow implements Runnable {
@@ -292,7 +295,8 @@ public class StartWindow implements Runnable {
         // TODO remake this
 
         // get the list for the topics to import
-        JSONArray importList = new RankLists().getImportTopics();
+        //JSONArray importList = new RankLists().getImportTopics();
+        JSONArray importList = new JSONArray();
         List<String> list = new ArrayList<>();
 
         JDialog importWindow = new JDialog();
@@ -397,11 +401,6 @@ public class StartWindow implements Runnable {
 
     public static void clearSelectionList() {
         selectionChoices = new JSONArray();
-    }
-
-    // TODO set ranking dialog window
-    public void setRankingWindow() {
-
     }
 
 }
