@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +22,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -444,6 +447,61 @@ public class RankLists {
 
     public boolean startNewRank(JFrame window) {
         //TODO: Kysy lupa uuden rankingin aloittamiseen
+        return true;
+    }
+
+    public static boolean importFiles(JFrame window) {
+        JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle("Select Folder");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+            if (chooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
+                File sourceFolder = chooser.getSelectedFile();
+                File destinationFolder = new File("topics/" + sourceFolder.getName());
+                return copyFolder(sourceFolder, destinationFolder);
+            } else {
+                System.out.println("No folder selected");
+            }
+        return false;
+    }
+
+    private static boolean copyFolder(File sourceFolder, File destinationFolder) {
+        if (!sourceFolder.isDirectory()) {
+            throw new IllegalArgumentException("Source folder must be a directory");
+        }
+
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+        
+        File[] files = sourceFolder.listFiles();
+
+        // Copy each file or directory to the destination folder
+        for (File file : files) {
+            if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg") || file.getName().endsWith(".png")) {
+                // Recursively copy subdirectories
+                
+                FileInputStream inputStream;
+                try {
+                    inputStream = new FileInputStream(file);
+                    FileOutputStream outputStream = new FileOutputStream(new File(destinationFolder, file.getName()));
+                    
+                    byte[] buffer = new byte[4096];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                    
+                    inputStream.close();
+                    outputStream.close();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
         return true;
     }
 }

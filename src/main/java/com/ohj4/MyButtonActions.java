@@ -3,8 +3,11 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -58,7 +61,12 @@ public class MyButtonActions implements ActionListener {
             //TODO: Jos jää aikaa, palaa Screenshots-ikkunaan!
         
         } else if (command == "import") {
-            // 'import button' pressed
+            System.out.println(RankLists.importFiles(window));
+            //TODO: näytä viesti-ikkuna, joka kertoo, onnistuiko kopiointi
+            
+            
+
+            /*// 'import button' pressed
             System.out.println(command + " pressed.");
             
             // import chosen topics
@@ -72,7 +80,7 @@ public class MyButtonActions implements ActionListener {
             if (new RankLists().importTopics(importList)) {
                 Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
                 okmessage.setVisible(true);
-            }
+            }*/
 
         } else if (command == "importbutton") {
             // 'sidemenu import' pressed

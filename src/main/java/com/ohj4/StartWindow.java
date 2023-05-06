@@ -185,11 +185,13 @@ public class StartWindow implements Runnable {
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
         JMenuItem menu_screenshots = new MyButtons(window).setMenuButton("Screenshots", "screenshots");
-        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "importbutton");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Files</html>", "import");
+        JMenuItem menu_help = new MyButtons(window).setMenuButton("<html>About<br>This App</html>", "help");
 
         sidebarMenu.add(menu_new);
         sidebarMenu.add(menu_screenshots);
         sidebarMenu.add(menu_import);
+        sidebarMenu.add(menu_help);
 
         sidebarMenu.setBorder(null);
 
