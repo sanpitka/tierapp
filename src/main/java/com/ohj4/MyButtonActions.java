@@ -24,7 +24,7 @@ public class MyButtonActions implements ActionListener {
     }
 
     /**
-     * All the button actions of this application in alfabethical order.
+     * All the button actions of this application in alfabetical order.
      * Invoked when action occurs.
      * 
      * @param e the event to be processed
@@ -34,15 +34,23 @@ public class MyButtonActions implements ActionListener {
         
         String command = e.getActionCommand();
 
-        if (command.startsWith("choose")) {
-            
-        }
-
-        if (command == "close") {
+        if (command.startsWith("choose ")) {
+            // close the topic selection dialog
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
 
+            // open the ranking dialog with the chosen topic
+            String target = command.replace("choose ", "");
+            JDialog rankWindow = new RankLists().rankPictures(window,target);
+            rankWindow.setVisible(true);
+
+        } else if (command == "close") {
+
+            // close the dialog window
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
 
         } else if (command.startsWith("delete")) {
             Component source = (Component) e.getSource();
@@ -57,18 +65,6 @@ public class MyButtonActions implements ActionListener {
             // 'import button' pressed
             System.out.println(command + " pressed.");
             
-            // import chosen topics
-            JSONArray importList = StartWindow.getSelectionList();
-            StartWindow.clearSelectionList();
-            
-            Component source = (Component) e.getSource();
-            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
-            dialog.dispose();
-            
-            if (new RankLists().importTopics(importList)) {
-                Component okmessage = new StartWindow().setDialogueWindow(window, "Topics imported!", null, null, 1);
-                okmessage.setVisible(true);
-            }
 
         } else if (command == "importbutton") {
             // 'sidemenu import' pressed
@@ -90,13 +86,12 @@ public class MyButtonActions implements ActionListener {
             popupMenu.show(button, 0, y);
 
         } else if (command == "new") {
+
             if (new RankLists().startNewRank(window)){
                 JDialog topicSelection = new RankLists().selectTopic(this.window);
                 topicSelection.setName("selection");
                 topicSelection.setVisible(true);
-            }
-            
-    
+            }  
             
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(this.window, command);
