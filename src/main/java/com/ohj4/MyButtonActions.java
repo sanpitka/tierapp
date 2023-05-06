@@ -35,13 +35,19 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command.startsWith("choose ")) {
-            
+            // close the topic selection dialog
+            Component source = (Component) e.getSource();
+            JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+            dialog.dispose();
+
+            // open the ranking dialog with the chosen topic
             String target = command.replace("choose ", "");
             JDialog rankWindow = new RankLists().rankPictures(window,target);
             rankWindow.setVisible(true);
 
         } else if (command == "close") {
 
+            // close the dialog window
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();

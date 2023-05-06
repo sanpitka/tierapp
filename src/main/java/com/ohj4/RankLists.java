@@ -48,6 +48,7 @@ public class RankLists {
 
     private JSONArray rankingResults = new JSONArray();
     private int index = 0;
+    private JLabel pictureLabel = new JLabel();
     
     public JSONArray getTopicList() {
 
@@ -208,18 +209,31 @@ public class RankLists {
 
                 // add all filenames to the topic array
                 for (File filename: filenames) {
+
                     // validate that the file is jp(e)g or png first, then add to list
                     if (validatePicture(filename.getPath())) {
-                        JSONObject file = new JSONObject();
-                        file.put("name", filename.getPath().replaceAll("\\\\", "/"));
-                        file.put("rank", "");
-                        newTopic.put(file);
+
+                        // also check that the file is not the topic icon
+                        String[] pathArray = topicpath.replaceAll("\\\\", "/").split("/");
+                        String topicName = pathArray[1]; // get the topic folder name
+
+                        if (filename.getName().equalsIgnoreCase(topicName + ".jpg") || filename.getName().equalsIgnoreCase(topicName + ".jpeg") || filename.getName().equalsIgnoreCase(topicName + ".png")) {
+
+                            break;
+
+                        } else {
+                            JSONObject file = new JSONObject();
+                            file.put("name", filename.getPath().replaceAll("\\\\", "/"));
+                            file.put("rank", "");
+                            newTopic.put(file);
+                        }
+   
                     }
                 }
             }
 
         } catch (Exception e) {
-            System.out.println("Error opening topics folder" + e);
+            System.out.println("Error opening topics folder " + e);
             return null;
         }
         
@@ -364,27 +378,28 @@ public class RankLists {
 
     public JDialog rankPictures (JFrame window, String topicPath) {
 
-        JDialog rankWindow = new JDialog();
-        rankWindow.setUndecorated(true); // remove title bar
-        rankWindow.setMinimumSize(new Dimension(600, 500));
-        rankWindow.setMaximumSize(new Dimension(600, 600));
-        rankWindow.setLayout(new BorderLayout(5, 5));
-        rankWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
-        rankWindow.setForeground(Color.BLACK);
-        rankWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        rankWindow.setLocationRelativeTo(window);
-
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
+        
+        JDialog rankWindow = new JDialog();
+        rankWindow.setUndecorated(true); // remove title bar
 
         if (topicArray != null && topicArray.length() > 0) {
 
+            rankWindow.setMinimumSize(new Dimension(600, 500));
+            rankWindow.setMaximumSize(new Dimension(600, 600));
+            rankWindow.setLayout(new BorderLayout(5, 5));
+            rankWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
+            rankWindow.setForeground(Color.BLACK);
+            rankWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+            rankWindow.setLocationRelativeTo(window);
+            
             // display first picture to rank
+            // TODO scale the picture to fit
             String filename = topicArray.getJSONObject(index).getString("name");
             ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-
-            JLabel pictureLabel = new JLabel(currentPicture);
-            rankWindow.add(pictureLabel, BorderLayout.NORTH);
+            pictureLabel = new JLabel(currentPicture);
+            rankWindow.add(pictureLabel, BorderLayout.CENTER);
 
             // display ranking letters
             JPanel buttonRow = new JPanel();
@@ -406,19 +421,15 @@ public class RankLists {
                         String ranking = ((JButton) b.getSource()).getText();
                         topicArray.getJSONObject(index).put("rank", ranking);
                         rankingResults.put(topicArray.getJSONObject(index));
-                        System.out.println(rankingResults);
                         
                         // move to next picture
                         index++;
 
                         if (index < topicArray.length()) {
-                            // destroy pictureLabel from previous picture
-                            rankWindow.remove(pictureLabel);
-
                             // create new picture and add it to the rankWindow
                             String filename = topicArray.getJSONObject(index).getString("name");
                             ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-                            JLabel pictureLabel = new JLabel(currentPicture);
+                            pictureLabel.setIcon(currentPicture);
                             rankWindow.add(pictureLabel, BorderLayout.CENTER);
                             
                             rankWindow.revalidate();
@@ -427,15 +438,26 @@ public class RankLists {
                             // end of ranking, close rankWindow
                             index = 0;
                             rankWindow.dispose();
+
+                            // show splash screen to tell user that ranking ended
+                            JDialog ended = new StartWindow().setDialogueWindow(window, "Ranking ended!", null, null, 2);
+                            ended.setVisible(true);
                         }
                     }
                 });
-
+                
                 }
+
+            } else {
+                // topic has no pictures to rank
+                JDialog error = new StartWindow().setDialogueWindow(window, "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>", null, null, 3);
+                error.setVisible(true);
+                rankWindow.dispose();
+
             }
         
-        
         return rankWindow;
+        
     }
 
     private JButton createRankButton(String label, Color backgroundColor) {
@@ -447,15 +469,6 @@ public class RankLists {
         newButton.setBorder(BorderFactory.createEmptyBorder(7,20,20,20));
         newButton.setHorizontalTextPosition(SwingConstants.CENTER);
         newButton.setVerticalTextPosition(SwingConstants.CENTER);
-
-        // Add an ActionListener to the button
-        newButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                // Perform some action when the button is clicked
-                String actionCommand = e.getActionCommand();
-                System.out.println("Button clicked: " + actionCommand);
-            }
-        });
         
         // Set the action command of the button to its label
         newButton.setActionCommand(label);
@@ -471,7 +484,7 @@ public class RankLists {
             if (file.exists() && !file.isDirectory()) {
 
                 Image picture = ImageIO.read(file);
-                return picture;
+                return picture; 
 
             } else {
                 return null;
