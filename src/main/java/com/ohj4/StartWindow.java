@@ -492,8 +492,7 @@ public class StartWindow implements Runnable {
     }
 
     public JLabel changeCategory(String categoryName) {
-
-        System.out.println(categoryName);
+        
         File image = new RankLists().setTopicImage(categoryName);
         try {
             Image img = ImageIO.read(image);
@@ -505,6 +504,9 @@ public class StartWindow implements Runnable {
             e.printStackTrace();
         }
         return categoryLabel;
+        
+        
+        
     }
 
 }

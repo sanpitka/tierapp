@@ -21,11 +21,15 @@ public class Screenshots {
      * @return A component that contains buttons to saved screenshots
      */
     public JPopupMenu showScreenshots(JFrame window) {
+        //TODO: Scrollpane ei toimi, korjaa!
+        int width = window.getSize().width / 6 * 5 - 9;
+        int height = 474;
 
         JPopupMenu screenshotsMenu = new JPopupMenu();
+        screenshotsMenu.setPreferredSize(new Dimension(width, height));
 
         JPanel screenshotsPanel = new JPanel();
-        screenshotsPanel.setPreferredSize(new Dimension(570, 400));
+        screenshotsPanel.setPreferredSize(new Dimension(width, height));
         screenshotsPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
         screenshotsPanel.setBackground(new Color(184, 184, 184));
 
@@ -58,8 +62,10 @@ public class Screenshots {
             }
         }
         JScrollPane scrollPane = new JScrollPane(screenshotsPanel);
-        scrollPane.setPreferredSize(new Dimension(570, 600));
+        scrollPane.setPreferredSize(new Dimension(width, height));
         scrollPane.setBackground(Color.LIGHT_GRAY);
+        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
 
         screenshotsMenu.add(scrollPane);
 

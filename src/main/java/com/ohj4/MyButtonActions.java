@@ -116,8 +116,7 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "screenshots") {
             JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
             screenshots.setName("screenshots");
-            screenshots.setPreferredSize(new Dimension((window.getSize().width / 6 * 5 - 9), 475));
-            screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 118);
+            screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
         
         } else if (command == "sidebarimport") {
             // TODO make this a splash screen, or get it to work otherwise
@@ -148,7 +147,7 @@ public class MyButtonActions implements ActionListener {
      * @param componentName The name of the component that we want to find within the given container.
      * @return the component or nested component, or null if the component is not found
      */
-    private Component findComponentByName(Container container, String componentName) {
+    /*private Component findComponentByName(Container container, String componentName) {
         
         Component[] components = container.getComponents();
 
@@ -168,7 +167,7 @@ public class MyButtonActions implements ActionListener {
 
         return null; // Component not found
 
-    }
+    }*/
 
     public static void setListname(String listName) {
         Screenshots.filename = listName;
