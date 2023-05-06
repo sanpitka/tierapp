@@ -21,7 +21,7 @@ public class Screenshots {
      * @return A component that contains buttons to saved screenshots
      */
     public JPopupMenu showScreenshots(JFrame window) {
-        //TODO: Scrollpane ei toimi, korjaa!
+        
         int width = window.getSize().width / 6 * 5 - 9;
         int height = 474;
 

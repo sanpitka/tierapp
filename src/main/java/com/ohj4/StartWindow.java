@@ -1,12 +1,8 @@
 package com.ohj4;
 
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.BorderFactory;
@@ -378,108 +374,6 @@ public class StartWindow implements Runnable {
         return topicWindow;
     }
 
-    public JDialog setImportWindow(Component dialogOwner, String dialogText) {
-
-        // get the list for the topics to import
-        JSONArray importList = new RankLists().getImportTopics();
-        List<String> list = new ArrayList<>();
-
-        JDialog importWindow = new JDialog();
-        importWindow.setUndecorated(true); // remove title bar
-        JPanel filler = new JPanel(); // set filler to adjust layout
-        filler.setBackground(Color.LIGHT_GRAY);
-
-        importWindow.setMinimumSize(new Dimension(500, 200));
-        importWindow.setMaximumSize(new Dimension(500, 500));
-
-        importWindow.setLayout(new BorderLayout(10, 10));
-        importWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
-        importWindow.setForeground(Color.BLACK);
-        importWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        importWindow.setLocationRelativeTo(dialogOwner);
-
-        // set window text
-        JLabel windowtext = new JLabel(dialogText, SwingConstants.LEFT);
-        windowtext.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
-        windowtext.setPreferredSize(new Dimension(300, 40));
-        importWindow.add(windowtext, BorderLayout.NORTH);
-        
-        // set a list element for topics
-        JPanel selectionList = new JPanel();
-        selectionList.setLayout(new GridLayout(0, 1));
-        selectionList.setBackground(Color.LIGHT_GRAY);
-
-        if (importList == null || importList.length() == 0) {
-
-            JLabel error = new JLabel("No topics to import", null, 0);
-            error.setFont(new Font("Arial", Font.PLAIN, 20));
-            error.setBackground(Color.LIGHT_GRAY);
-            selectionList.add(error);
-
-        } else {
-            // get the topics from the JSONArray
-                for (int i = 0; i < importList.length(); i++) {
-
-                JPanel topicImportList = new JPanel(new BorderLayout(10, 10));
-                topicImportList.setBackground(Color.LIGHT_GRAY);
-                String topic = importList.getString(i);
-
-                // display the topic name
-                JLabel topicName = new JLabel(topic);
-                topicName.setBackground(Color.LIGHT_GRAY);
-                topicName.setFont(new Font("Arial", Font.PLAIN, 20));
-                topicImportList.add(topicName, BorderLayout.CENTER);
-
-                // add the checkbox
-                JCheckBox selection = new JCheckBox();
-                selection.setPreferredSize(new Dimension(20, 20));
-                selection.setBackground(Color.LIGHT_GRAY);
-                selection.setName(topic);
-                // add a listener to the checkbox to see if it's selected or not
-                selection.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        if (e.getStateChange() == ItemEvent.SELECTED) {
-                            // Checkbox was selected
-                            list.add(topic);
-                            selectionChoices = new JSONArray(list);
-                            System.out.println(selectionChoices.toString());
-
-                        } else {
-                            // Checkbox was deselected
-                            list.remove(topic);
-                            selectionChoices = new JSONArray(list);
-                            System.out.println(selectionChoices.toString());
-
-                        }
-                    }
-                });
-
-                topicImportList.add(selection, BorderLayout.EAST);
-                selectionList.add(topicImportList);
-
-            }
-        }
-
-        // add a scrollbar for easier browsing
-        JScrollPane scrollPane = new JScrollPane(selectionList);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
-        scrollPane.setBackground(Color.LIGHT_GRAY);
-        importWindow.add(scrollPane, BorderLayout.CENTER);
-
-        // add a cancel button
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 8));
-        buttonPanel.setBackground(Color.LIGHT_GRAY);
-        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
-        buttonPanel.add(filler); // add fillers to make button smaller
-        buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton("Import selected", "import"));
-        importWindow.add(buttonPanel, BorderLayout.SOUTH);
-
-        importWindow.pack();
-
-        return importWindow;
-    }
-
     public static JSONArray getSelectionList() {
         return selectionChoices;
     }
@@ -488,22 +382,16 @@ public class StartWindow implements Runnable {
         selectionChoices = new JSONArray();
     }
 
-    // TODO set ranking dialog window
-    public void setRankingWindow() {
-
-    }
-
     public JLabel changeCategory(String categoryName) {
         
-        File image = new RankLists().setTopicImage(categoryName);
+        File image = new RankLists().setTopicImage(categoryName, window);
         try {
             Image img = ImageIO.read(image);
             Image smallerImg = img.getScaledInstance(130, 90, Image.SCALE_DEFAULT);
             ImageIcon icon = new ImageIcon(smallerImg);
             categoryLabel.setIcon(icon);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(window, "An I/O error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
         return categoryLabel;
         
