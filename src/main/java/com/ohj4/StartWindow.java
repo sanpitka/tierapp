@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.BorderFactory;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.json.JSONArray;
@@ -312,6 +312,65 @@ public class StartWindow implements Runnable {
         
         
         
+    }
+
+    public JPopupMenu showManual(JFrame dialogOwner) {
+        String manual = "<html><h1>Tier List App manual</h1>" +
+                "<br>Tier List App is an easy-to-use tier list maker that allows you to " +
+                "rank various subjects <br>in tier lists from the best to the worst. Take " +
+                "a screenshot from your tierlist to save it <br>and show it to your friends!" +
+                "<br>" + 
+                "<br>Tiers" +
+                "<br>S - Superb" +
+                "<br>A - 2nd best grade" +
+                "<br>..." +
+                "<br>F - worst grade" +
+                "<br>" +
+                "<br><h2>Ranking</h2>" +
+                "Choose a new topic by clicking the New button in Menu. If there are no topics," +
+                "you can <br>import some by clicking Import Files in Menu. Choose a topic and click " +
+                "the Go rank <br>button. Rank items by clicking the grade you want. If you want to " +
+                "return to the previous <br>item, click undo. You can also skip an item if you like." +
+                "<br>When the ranking is finished, you are able to take a look at the tier list in visual form. " +
+                "<br>You take a screenshot of your tier list by clicking the Take Screenshot button. Give a " +
+                "<br>name to your tier list by replacing the 'Unnamed tier list' text with a name that " +
+                "<br>describes your tier list." +
+                "<br><h2>Adding topics</h2>" +
+                "To add a new topic, choose some images of the category " + 
+                "you would like to rank and <br>save them into one folder. The " +
+                "allowed formats are JPG, JPEG and PNG. If " +
+                "you <br>would like to have a theme image for your category, " +
+                "name it according to your folder. <br>For example the theme image " +
+                "of folder Folder should be named to Folder.jpg or <br>Folder.png." +
+                "<br>You can import your images into Tier List App by clicking Import " +
+                "Files button in Menu <br>and choosing the folder you would like to import." +
+                "<br><h2>Handling screenshots</h2>" +
+                "You can have a look at your screenshots and delete them by clicking Screenshots " +
+                "<br>button in Menu. If you want to share your screenshots to your friends or to " +
+                "<br>social media, you'll find them in the Screenshots folder of this app.";
+                
+
+                int width = dialogOwner.getSize().width / 6 * 5 - 9;
+                int height = 474;
+        
+                JPopupMenu aboutApp = new JPopupMenu();
+                aboutApp.setPreferredSize(new Dimension(width, height));
+        
+                JPanel manualPanel = new JPanel();
+                manualPanel.setPreferredSize(new Dimension(width, 800));
+                manualPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
+                manualPanel.setBackground(new Color(184, 184, 184));
+                JLabel manualLabel = new JLabel(manual);
+                manualLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+                manualPanel.add(manualLabel);
+                JScrollPane scrollPane = new JScrollPane(manualPanel);
+                scrollPane.setPreferredSize(new Dimension(width, height));
+                scrollPane.setBackground(Color.LIGHT_GRAY);
+                scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+
+                aboutApp.add(scrollPane);
+                return aboutApp;
     }
 
 }

@@ -180,6 +180,7 @@ public class Screenshots {
                 if (option == JOptionPane.YES_OPTION) {
                     if (file.delete()) {
                         JOptionPane.showMessageDialog(dialog, "File deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        
                         return true;
                     } else {
                         JOptionPane.showMessageDialog(dialog, "Failed to delete file.", "Error", JOptionPane.ERROR_MESSAGE);

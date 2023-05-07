@@ -35,20 +35,13 @@ public class MyButtonActions implements ActionListener {
         String command = e.getActionCommand();
 
         if (command.startsWith("choose")) {
-            // close the topic selection dialog
             String category = command.replace("choose ", "");
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
             new StartWindow().changeCategory(category);
 
-            // open the ranking dialog with the chosen topic
-            String target = command.replace("choose ", "");
-            JDialog rankWindow = new RankLists().rankPictures(window,target);
-            rankWindow.setVisible(true);
-        }
-
-        if (command == "close") {
+        }else if (command == "close") {
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
@@ -59,13 +52,14 @@ public class MyButtonActions implements ActionListener {
             Boolean deleted = new Screenshots().delete(dialog, command);
             if (deleted) {
                 dialog.dispose();
-                JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
-                screenshots.setName("screenshots");
-                screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
             }
-            //TODO: Jos jää aikaa, palaa Screenshots-ikkunaan!
+            //TODO: jos vaan keksit keinon, palaa takaisin Screenshots-ikkunaan!
         
-        } else if (command == "import") {
+        } else if (command == "help") {
+            JPopupMenu aboutApp = new StartWindow().showManual(window);
+            aboutApp.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
+
+        }else if (command == "import") {
 
             String importInfoMessage = "<html>To import new topic:" +
                 "<br><br>Choose a folder you would like to import." +
@@ -85,7 +79,7 @@ public class MyButtonActions implements ActionListener {
         
         }else if (command == "menu") {
             
-            JPopupMenu popupMenu = new StartWindow().setSidebarMenu(this.window);
+            JPopupMenu popupMenu = new StartWindow().setSidebarMenu(window);
             popupMenu.setName("popupmenu");
             
             // Get the menu button lower left corner coordinates for the sidebar menu
@@ -98,13 +92,13 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "new") {
 
             if (new RankLists().startNewRank(window)){
-                JDialog topicSelection = new RankLists().selectTopic(this.window);
+                JDialog topicSelection = new RankLists().selectTopic(window);
                 topicSelection.setName("selection");
                 topicSelection.setVisible(true);
             }  
             
         } else if (command.startsWith("open")) {
-            Component openedShot = new Screenshots().openScreenshot(this.window, command);
+            Component openedShot = new Screenshots().openScreenshot(window, command);
             openedShot.setVisible(true);
 
         } else if (command == "rank") {
@@ -117,7 +111,7 @@ public class MyButtonActions implements ActionListener {
             new Screenshots().takeScreenshot(window);
 
         } else if (command == "screenshots") {
-            JPopupMenu screenshots = new Screenshots().showScreenshots(this.window);
+            JPopupMenu screenshots = new Screenshots().showScreenshots(window);
             screenshots.setName("screenshots");
             screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
 
