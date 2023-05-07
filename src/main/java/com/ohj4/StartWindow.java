@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,6 +19,7 @@ import javax.swing.event.*;
 public class StartWindow implements Runnable {
 
     JFrame window;
+    static JLabel categoryLabel;
     private static JSONArray selectionChoices = new JSONArray();
     private static JPanel rowPanel = (JPanel)setRows();
 
@@ -50,7 +52,10 @@ public class StartWindow implements Runnable {
         //             }   
         //         }
         // }, 0, 1000);
-        
+                JDialog topicSelection = new RankLists().selectTopic(window);
+        topicSelection.setName("selection");
+        topicSelection.setVisible(true);
+
     }
 
     /** All the screen components go here */
@@ -103,6 +108,7 @@ public class StartWindow implements Runnable {
      */
     private Component setNorthPanel() {
         JPanel northPanel = new JPanel(new GridLayout());
+        northPanel.setPreferredSize(new Dimension(800, 90));
         JPanel northPanelLeft = new JPanel(new GridLayout());
         JPanel northPanelRight = new JPanel(new GridLayout());
         Color buttonPink = new Color(255, 196, 242);
@@ -134,9 +140,7 @@ public class StartWindow implements Runnable {
         JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>Take<br>Screenshot</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
         
-        //TODO: Change the image icon according to the user's choice
-        ImageIcon category = new ImageIcon("Breakfast1.png");
-        JLabel categoryLabel = new JLabel(category);
+        categoryLabel = new JLabel();
         northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
@@ -239,11 +243,13 @@ public class StartWindow implements Runnable {
 
         JMenuItem menu_new = new MyButtons(window).setMenuButton("New", "new");
         JMenuItem menu_screenshots = new MyButtons(window).setMenuButton("Screenshots", "screenshots");
-        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Custom</html>", "importbutton");
+        JMenuItem menu_import = new MyButtons(window).setMenuButton("<html>Import<br>Files</html>", "import");
+        JMenuItem menu_help = new MyButtons(window).setMenuButton("<html>About<br>This App</html>", "help");
 
         sidebarMenu.add(menu_new);
         sidebarMenu.add(menu_screenshots);
         sidebarMenu.add(menu_import);
+        sidebarMenu.add(menu_help);
 
         sidebarMenu.setBorder(null);
 
@@ -348,111 +354,6 @@ public class StartWindow implements Runnable {
         return dialogWindow;
     }
 
-    public JDialog setImportWindow(Component dialogOwner, String dialogText) {
-
-        // TODO remake this
-
-        // get the list for the topics to import
-        //JSONArray importList = new RankLists().getImportTopics();
-        JSONArray importList = new JSONArray();
-        List<String> list = new ArrayList<>();
-
-        JDialog importWindow = new JDialog();
-        importWindow.setUndecorated(true); // remove title bar
-        JPanel filler = new JPanel(); // set filler to adjust layout
-        filler.setBackground(Color.LIGHT_GRAY);
-
-        importWindow.setMinimumSize(new Dimension(500, 200));
-        importWindow.setMaximumSize(new Dimension(500, 500));
-
-        importWindow.setLayout(new BorderLayout(10, 10));
-        importWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
-        importWindow.setForeground(Color.BLACK);
-        importWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        importWindow.setLocationRelativeTo(dialogOwner);
-
-        // set window text
-        JLabel windowtext = new JLabel(dialogText, SwingConstants.LEFT);
-        windowtext.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
-        windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
-        windowtext.setPreferredSize(new Dimension(300, 40));
-        importWindow.add(windowtext, BorderLayout.NORTH);
-        
-        // set a list element for topics
-        JPanel selectionList = new JPanel();
-        selectionList.setLayout(new GridLayout(0, 1));
-        selectionList.setBackground(Color.LIGHT_GRAY);
-
-        if (importList == null || importList.length() == 0) {
-
-            JLabel error = new JLabel("No topics to import", null, 0);
-            error.setFont(new Font("Arial", Font.PLAIN, 20));
-            error.setBackground(Color.LIGHT_GRAY);
-            selectionList.add(error);
-
-        } else {
-            // get the topics from the JSONArray
-                for (int i = 0; i < importList.length(); i++) {
-
-                JPanel topicImportList = new JPanel(new BorderLayout(10, 10));
-                topicImportList.setBackground(Color.LIGHT_GRAY);
-                String topic = importList.getString(i);
-
-                // display the topic name
-                JLabel topicName = new JLabel(topic);
-                topicName.setBackground(Color.LIGHT_GRAY);
-                topicName.setFont(new Font("Arial", Font.PLAIN, 20));
-                topicImportList.add(topicName, BorderLayout.CENTER);
-
-                // add the checkbox
-                JCheckBox selection = new JCheckBox();
-                selection.setPreferredSize(new Dimension(20, 20));
-                selection.setBackground(Color.LIGHT_GRAY);
-                selection.setName(topic);
-                // add a listener to the checkbox to see if it's selected or not
-                selection.addItemListener(new ItemListener() {
-                    public void itemStateChanged(ItemEvent e) {
-                        if (e.getStateChange() == ItemEvent.SELECTED) {
-                            // Checkbox was selected
-                            list.add(topic);
-                            selectionChoices = new JSONArray(list);
-                            System.out.println(selectionChoices.toString());
-
-                        } else {
-                            // Checkbox was deselected
-                            list.remove(topic);
-                            selectionChoices = new JSONArray(list);
-                            System.out.println(selectionChoices.toString());
-
-                        }
-                    }
-                });
-
-                topicImportList.add(selection, BorderLayout.EAST);
-                selectionList.add(topicImportList);
-
-            }
-        }
-
-        // add a scrollbar for easier browsing
-        JScrollPane scrollPane = new JScrollPane(selectionList);
-        scrollPane.setPreferredSize(new Dimension(400, 200));
-        scrollPane.setBackground(Color.LIGHT_GRAY);
-        importWindow.add(scrollPane, BorderLayout.CENTER);
-
-        // add a cancel button
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 8));
-        buttonPanel.setBackground(Color.LIGHT_GRAY);
-        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "cancel"));
-        buttonPanel.add(filler); // add fillers to make button smaller
-        buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton("Import selected", "import"));
-        importWindow.add(buttonPanel, BorderLayout.SOUTH);
-
-        importWindow.pack();
-
-        return importWindow;
-    }
-
     public static JSONArray getSelectionList() {
         return selectionChoices;
     }
@@ -490,6 +391,82 @@ public class StartWindow implements Runnable {
 
         return null; // Component not found
 
+    }
+
+    public JLabel changeCategory(String categoryName) {
+        
+        File image = new RankLists().setTopicImage(categoryName, window);
+        try {
+            Image img = ImageIO.read(image);
+            Image smallerImg = img.getScaledInstance(130, 90, Image.SCALE_DEFAULT);
+            ImageIcon icon = new ImageIcon(smallerImg);
+            categoryLabel.setIcon(icon);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(window, "An I/O error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return categoryLabel;
+        
+        
+        
+    }
+
+    public JPopupMenu showManual(JFrame dialogOwner) {
+        String manual = "<html><h1>Tier List App manual</h1>" +
+                "<br>Tier List App is an easy-to-use tier list maker that allows you to " +
+                "rank various subjects <br>in tier lists from the best to the worst. Take " +
+                "a screenshot from your tierlist to save it <br>and show it to your friends!" +
+                "<br>" + 
+                "<br>Tiers" +
+                "<br>S - Superb" +
+                "<br>A - 2nd best grade" +
+                "<br>..." +
+                "<br>F - worst grade" +
+                "<br>" +
+                "<br><h2>Ranking</h2>" +
+                "Choose a new topic by clicking the New button in Menu. If there are no topics," +
+                "you can <br>import some by clicking Import Files in Menu. Choose a topic and click " +
+                "the Go rank <br>button. Rank items by clicking the grade you want. If you want to " +
+                "return to the previous <br>item, click undo. You can also skip an item if you like." +
+                "<br>When the ranking is finished, you are able to take a look at the tier list in visual form. " +
+                "<br>You take a screenshot of your tier list by clicking the Take Screenshot button. Give a " +
+                "<br>name to your tier list by replacing the 'Unnamed tier list' text with a name that " +
+                "<br>describes your tier list." +
+                "<br><h2>Adding topics</h2>" +
+                "To add a new topic, choose some images of the category " + 
+                "you would like to rank and <br>save them into one folder. The " +
+                "allowed formats are JPG, JPEG and PNG. If " +
+                "you <br>would like to have a theme image for your category, " +
+                "name it according to your folder. <br>For example the theme image " +
+                "of folder Folder should be named to Folder.jpg or <br>Folder.png." +
+                "<br>You can import your images into Tier List App by clicking Import " +
+                "Files button in Menu <br>and choosing the folder you would like to import." +
+                "<br><h2>Handling screenshots</h2>" +
+                "You can have a look at your screenshots and delete them by clicking Screenshots " +
+                "<br>button in Menu. If you want to share your screenshots to your friends or to " +
+                "<br>social media, you'll find them in the Screenshots folder of this app.";
+                
+
+                int width = dialogOwner.getSize().width / 6 * 5 - 9;
+                int height = 474;
+        
+                JPopupMenu aboutApp = new JPopupMenu();
+                aboutApp.setPreferredSize(new Dimension(width, height));
+        
+                JPanel manualPanel = new JPanel();
+                manualPanel.setPreferredSize(new Dimension(width, 800));
+                manualPanel.setLayout(new FlowLayout(FlowLayout.LEADING, 20, 20));
+                manualPanel.setBackground(new Color(184, 184, 184));
+                JLabel manualLabel = new JLabel(manual);
+                manualLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+                manualPanel.add(manualLabel);
+                JScrollPane scrollPane = new JScrollPane(manualPanel);
+                scrollPane.setPreferredSize(new Dimension(width, height));
+                scrollPane.setBackground(Color.LIGHT_GRAY);
+                scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+
+                aboutApp.add(scrollPane);
+                return aboutApp;
     }
 
 }

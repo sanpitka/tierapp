@@ -1,33 +1,19 @@
 package com.ohj4;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import org.json.JSONArray;
@@ -164,33 +150,7 @@ public class RankLists {
         if (topicsFolder.isDirectory()) {
             for (File folder : topicsFolder.listFiles()) {
                 if (folder.isDirectory()) {
-                    String topicName = folder.getName();
-                    String imgNamePng = topicName + ".png";
-                    String imgNameJpg = topicName + ".jpg";
-                    File imgFile = new File(folder + "/" +imgNamePng);
-                    if (!imgFile.exists()) {
-                        imgFile = new File(folder + "/" +imgNameJpg);
-                    }
-                    if (!imgFile.exists()) {
-                        //If there is no topic image, create one.
-                        BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
-                        Graphics2D g2d = newImage.createGraphics();
-                        g2d.setColor(Color.WHITE);
-                        g2d.fillRect(0, 0, 130, 80);
-                        g2d.dispose();
-                        g2d = newImage.createGraphics();
-                        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
-                        g2d.setColor(Color.BLACK);
-                        g2d.drawString(topicName, 5, 45);
-                        g2d.dispose();
-                        imgFile = new File(folder + "/" +imgNameJpg);
-                        try {
-                            ImageIO.write(newImage, "jpg", imgFile);
-                        } catch (Exception e) {
-                            //TODO: ei mitään printtailuja, joku parempi virhekoodi
-                            System.out.println("Error: " + e.getMessage());
-                        }
-                    }
+                    File imgFile = setTopicImage(folder.getName(), window);
                     JPanel row = new JPanel(new BorderLayout());
                     try {
                         BufferedImage topicImage = ImageIO.read(imgFile);
@@ -204,14 +164,14 @@ public class RankLists {
 
                         row.add(imgLabel, BorderLayout.WEST);
                         row.add(txtLabel, BorderLayout.CENTER);
-                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + folder), BorderLayout.EAST);
+                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + labeltext), BorderLayout.EAST);
                         row.setBorder(BorderFactory.createLineBorder(Color.black));
 
                         selectionPanel.add(row);
 
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(titlePanel, "An error occurred in reading images: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        
                     }
                     
 
@@ -235,15 +195,93 @@ public class RankLists {
         return topicSelection;
     }
 
-    public void startNewRank(JFrame window) {
+    public File setTopicImage(String topicName, JFrame window) {
+        String imgNamePng = topicName + ".png";
+        String imgNameJpg = topicName + ".jpg";
+        File imgFile = new File("topics/" + topicName + "/" +imgNamePng);
+        if (!imgFile.exists()) {
+            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+        }
+        if (!imgFile.exists()) {
+            //If there is no topic image, create one.
+            BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = newImage.createGraphics();
+            g2d.setColor(Color.WHITE);
+            g2d.fillRect(0, 0, 130, 80);
+            g2d.dispose();
+            g2d = newImage.createGraphics();
+            g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+            g2d.setColor(Color.BLACK);
+            g2d.drawString(topicName, 5, 45);
+            g2d.dispose();
+            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+            try {
+                ImageIO.write(newImage, "jpg", imgFile);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        return imgFile;
+    }
 
-        //ask for permission to start new ranking
-        String[] buttonlabels = {"Cancel", "Ok"};
-        String[] buttonactions = {"close", "newconfirm"};
+    public boolean startNewRank(JFrame window) {
+        //TODO: Kysy lupa uuden rankingin aloittamiseen
+        return true;
+    }
 
-        JDialog confirmation = new StartWindow().setDialogueWindow(window, "<html>Are you sure you want<br>to start a new rank?</html>", buttonlabels, buttonactions, 0);
-        confirmation.setVisible(true);
+    public static boolean importFiles(JFrame window) {
+        JFileChooser chooser = new JFileChooser();
+            chooser.setCurrentDirectory(new java.io.File("."));
+            chooser.setDialogTitle("Select Folder");
+            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
+            if (chooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
+                File sourceFolder = chooser.getSelectedFile();
+                File destinationFolder = new File("topics/" + sourceFolder.getName());
+                return copyFolder(sourceFolder, destinationFolder, window);
+            } 
+        return false;
+    }
+
+    /**
+     * Imports images to topics folder.
+     * Creates a folder for new topic and copies JPG and PNG files there from the source folder.
+     * @param sourceFolder the folder the user wants to import
+     * @param destinationFolder the folder where images are copied
+     * @param window the main window
+     * @return true if succeeded, false otherwise
+     */
+    private static boolean copyFolder(File sourceFolder, File destinationFolder, JFrame window) {
+
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+        
+        File[] files = sourceFolder.listFiles();
+
+        for (File file : files) {
+            if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg") || file.getName().endsWith(".png")) {
+                           
+                FileInputStream inputStream;
+                try {
+                    inputStream = new FileInputStream(file);
+                    FileOutputStream outputStream = new FileOutputStream(new File(destinationFolder, file.getName()));
+                    
+                    byte[] buffer = new byte[4096];
+                    int length;
+                    while ((length = inputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                    
+                    inputStream.close();
+                    outputStream.close();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
