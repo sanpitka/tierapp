@@ -3,16 +3,15 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.BorderFactory;
+
 import javax.swing.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.google.gson.JsonArray;
 
 import javax.swing.event.*;
 
@@ -20,9 +19,11 @@ public class StartWindow implements Runnable {
 
     JFrame window;
     private static JSONArray selectionChoices = new JSONArray();
+    private static JPanel rowPanel = (JPanel)setRows();
 
     @Override
     public void run() {
+
         window = new JFrame();
         Image logo = Toolkit.getDefaultToolkit().getImage("Logo.png");
 
@@ -32,13 +33,24 @@ public class StartWindow implements Runnable {
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.getContentPane().setBackground(Color.BLACK);
         window.setVisible(true);
-
         window.setLayout(new BorderLayout());
-        
         window.add(setNorthPanel(), BorderLayout.NORTH);
         window.add(setWestPanel(true), BorderLayout.WEST);
-        window.add(setRows(), BorderLayout.CENTER);
+        window.add(rowPanel, BorderLayout.CENTER);
 
+        // check for rank result change every 1 second
+        // Timer timer = new Timer();
+        // timer.scheduleAtFixedRate(new TimerTask() {
+        //         public void run() {
+        //             JSONArray results = RankLists.getRankingResults();
+        //             System.out.println(results.length());
+        //             if (results.length() > 0) {
+        //                 updateRows(window, results);
+        //                 System.out.println(rowsPanel + " main");
+        //             }   
+        //         }
+        // }, 0, 1000);
+        
     }
 
     /** All the screen components go here */
@@ -119,7 +131,7 @@ public class StartWindow implements Runnable {
          listNameField.setFont(listNameFont);
          northPanel.add(listNameField);
 
-        JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>" + "Take" + "<br>" + "Screenshot" + "</html>", Color.BLACK, "screenshot");
+        JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>Take<br>Screenshot</html>", Color.BLACK, "screenshot");
         northPanelRight.add(screenshotbutton);
         
         //TODO: Change the image icon according to the user's choice
@@ -135,24 +147,69 @@ public class StartWindow implements Runnable {
     /**
      * Sets the rows in the screen, where the ranked pictures go
      */
-    private Component setRows() {
+    private static Component setRows() {
+
         JPanel rows = new JPanel();
-        rows.setPreferredSize(new Dimension(570, 600));
-        rows.setLayout(new GridLayout(7,1));
+        //rows.setPreferredSize(new Dimension(570, 600));
+        rows.setLayout(new GridLayout(7,0));
         rows.setBackground(new Color(184, 184, 184));
 
         Color lightGray = new Color(217, 217, 217);
         Color darkGray = new Color(184, 184, 184);
 
-        int rowCounter = 7;
-        for (int i=0; i<rowCounter; i++) {
-            JPanel newPanel = new JPanel();
-            newPanel.setBackground(i % 2 == 0 ? lightGray : darkGray);
-            
-            rows.add(newPanel);
+        String[] rowCounter = {"S", "A", "B", "C", "D", "E", "F"};
+
+        for (int i=0; i < rowCounter.length; i++) {
+            JPanel newRow = new JPanel();
+            newRow.setLayout(new GridLayout());
+            newRow.setBackground(i % 2 == 0 ? lightGray : darkGray);
+            newRow.setName(rowCounter[i]);           
+            rows.add(newRow);
+
         }
 
         return rows;
+ 
+    }
+
+    public void updateRows(JFrame owner, JSONArray results) {
+
+        // add the ranked pictures to the correct row, if the ranking has ended
+        if (results != null && results.length() > 0) {
+
+            for (int i = 0; i < results.length(); i++) {
+
+                JSONObject result = results.getJSONObject(i);
+                
+                // add the picture to the row that matches the rank
+
+                // TODO collect first, then add
+                if (result.has("rank")) {
+                    
+                    JPanel rankRow = (JPanel)findComponentByName(owner, result.getString("rank")); // find the correct rank row
+
+                    // set the image and image label height to the row height
+                    int height = rankRow.getHeight();
+                    
+                    ImageIcon imageIcon = new ImageIcon(result.getString("name")); // get the original image
+                    Image image = imageIcon.getImage();  // get the Image object
+
+                    // calculate the image width to maintain aspect ratio
+                    int width = (int) (image.getWidth(null) * (50.0 / image.getHeight(null)));
+
+                    // scale the image
+                    Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                    ImageIcon scaledIcon = new ImageIcon(scaledImage);
+
+                    JLabel imgLabel = new JLabel(scaledIcon);
+                    imgLabel.setSize(new Dimension(width, height)); // force the JLabel size to the same as the image
+
+                    rankRow.add(imgLabel);
+                    rankRow.repaint();
+                }
+                
+            }
+        } 
     }
 
 
@@ -192,6 +249,7 @@ public class StartWindow implements Runnable {
 
         return sidebarMenu;
     }
+
     /**
      * Sets a centered dialog window with no title bar. If no buttons are given, the window closes
      * after {@code timeout} seconds. Maximum 5 buttons.
@@ -251,7 +309,7 @@ public class StartWindow implements Runnable {
 
             for (int i = 0; i < buttonLabels.length; i++) {
                 
-                buttonPanel.add(new MyButtons(this.window).setDialogButton(buttonLabels[i], buttonActions[i]));
+                buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton(buttonLabels[i], buttonActions[i]));
 
             }
             
@@ -401,6 +459,37 @@ public class StartWindow implements Runnable {
 
     public static void clearSelectionList() {
         selectionChoices = new JSONArray();
+    }
+
+    /**
+     * Search for components inside the screen.
+     * 
+     * @param container A Container object that represents the container in which the component is
+     * located. A Container is a component that can contain other components, such as a JFrame, JPanel,
+     * or JDialog.
+     * @param componentName The name of the component that we want to find within the given container.
+     * @return the component or nested component, or null if the component is not found
+     */
+    private Component findComponentByName(Container container, String componentName) {
+        
+        Component[] components = container.getComponents();
+
+        for (Component component : components) {
+
+            if (component.getName() != null && component.getName().equals(componentName)) {
+                return component; // Component found
+            }
+
+            if (component instanceof Container) {
+                Component nestedComponent = findComponentByName((Container) component, componentName);
+                if (nestedComponent != null) {
+                    return nestedComponent; // Component found in nested container
+                }
+            }
+        }
+
+        return null; // Component not found
+
     }
 
 }
