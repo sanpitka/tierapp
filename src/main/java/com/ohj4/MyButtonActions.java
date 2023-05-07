@@ -123,7 +123,14 @@ public class MyButtonActions implements ActionListener {
             openedShot.setVisible(true);
 
         } else if (command == "rank") {
-            // 'go rank' pressed
+            
+            // clean the screen before start
+            RankLists.clearRankingResults(window);
+            if (category == null || category.isEmpty()) {
+                JDialog splash = new StartWindow().setDialogueWindow(window, "<html>No topic selected.<br>Please select a topic.</html>", null, null, 2);
+                splash.setVisible(true);
+            }
+
             // open the ranking dialog with the chosen topic
             if (category != null && !category.isEmpty()) {
                 JDialog rankWindow = new RankLists().rankPictures(window, category);

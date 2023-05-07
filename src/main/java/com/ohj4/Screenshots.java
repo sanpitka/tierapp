@@ -134,6 +134,7 @@ public class Screenshots {
         openedShot.setForeground(Color.BLACK);
         openedShot.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         openedShot.setLocationRelativeTo(dialogOwner);
+        openedShot.setAlwaysOnTop(true);
 
         // set window text and picture
         try {
