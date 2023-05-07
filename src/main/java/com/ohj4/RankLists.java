@@ -94,9 +94,10 @@ public class RankLists {
                     if (validatePicture(filename.getPath())) {
 
                         // also check that the file is not the topic icon
-                        if (filename.getName().equalsIgnoreCase(topicpath + ".jpg") || filename.getName().equalsIgnoreCase(topicpath + ".jpeg") || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
-
-                            break;
+                        if (filename.getName().equalsIgnoreCase(topicpath + ".jpg") 
+                            || filename.getName().equalsIgnoreCase(topicpath + ".jpeg") 
+                            || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
+                            continue;
 
                         } else {
                             JSONObject file = new JSONObject();
@@ -419,6 +420,9 @@ public class RankLists {
                 public void actionPerformed(ActionEvent u) {
                     if (index > 0) {
                         index--;
+                        if (index == 0) {
+                            undo.setEnabled(false);
+                        }
 
                         if (index < topicArray.length()) {
                             // create new picture and add it to the rankWindow

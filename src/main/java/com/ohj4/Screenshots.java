@@ -166,8 +166,8 @@ public class Screenshots {
         return openedShot;
     }
 
-    /**
-     * Delete a chosen screenshot file
+     /**
+     * Delete the chosen screenshot file
      * @param dialog the current JDialog panel
      * @param filename delete command and the name of the file that will be deleted
      * @return true if deletion succeeded or file does not exist
@@ -180,7 +180,6 @@ public class Screenshots {
                 if (option == JOptionPane.YES_OPTION) {
                     if (file.delete()) {
                         JOptionPane.showMessageDialog(dialog, "File deleted successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        
                         return true;
                     } else {
                         JOptionPane.showMessageDialog(dialog, "Failed to delete file.", "Error", JOptionPane.ERROR_MESSAGE);

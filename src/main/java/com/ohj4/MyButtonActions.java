@@ -60,7 +60,6 @@ public class MyButtonActions implements ActionListener {
             if (deleted) {
                 dialog.dispose();
             }
-            //TODO: jos vaan keksit keinon, palaa takaisin Screenshots-ikkunaan!
         
         } else if (command == "help") {
             JPopupMenu aboutApp = new StartWindow().showManual(window);
@@ -98,7 +97,7 @@ public class MyButtonActions implements ActionListener {
 
             
 
-        } else if (command == "new" || command == "newconfirm") {
+        } else if (command.startsWith("new")) {
 
             if (command == "new") {
 
