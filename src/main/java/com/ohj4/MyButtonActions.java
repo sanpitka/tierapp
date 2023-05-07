@@ -150,7 +150,3 @@ public class MyButtonActions implements ActionListener {
     }
     
 }
-
-
-    
-
