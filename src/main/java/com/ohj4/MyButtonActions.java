@@ -151,22 +151,6 @@ public class MyButtonActions implements ActionListener {
         Screenshots.filename = listName;
     }
     
-    private static ArrayList<Component> superFinder(String name) {
-        ArrayList<Component> found = new ArrayList<Component>();
-        Window[] windows = Window.getWindows();
-        for (Window window : windows) {
-            Container container = window.getFocusCycleRootAncestor();
-            if (container != null) {
-                Component[] components = container.getComponents();
-                for (Component component : components) {
-                    if (name.equals(component.getName())) {
-                        found.add(component);
-                    }
-                }
-            }
-        }
-        return found;
-    }
 }
 
 
