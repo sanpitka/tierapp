@@ -3,10 +3,10 @@ rank various subjects in tier lists from the best to the worst. Take
 a screenshot from your tierlist to save it and show it to your friends! 
     
 ###Tiers 
-S - Superb 
-A - 2nd best grade 
-... 
-F - worst grade 
+<br>S - Superb 
+<br>A - 2nd best grade 
+<br>... 
+<br>F - worst grade 
     
 ##Ranking 
 
