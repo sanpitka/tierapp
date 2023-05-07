@@ -96,7 +96,7 @@ public class RankLists {
                         // also check that the file is not the topic icon
                         if (filename.getName().equalsIgnoreCase(topicpath + ".jpg") || filename.getName().equalsIgnoreCase(topicpath + ".jpeg") || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
 
-                            break;
+                            continue;
 
                         } else {
                             JSONObject file = new JSONObject();
