@@ -25,10 +25,17 @@ import org.json.JSONObject;
  */
 public class RankLists {
 
-    private JSONArray rankingResults = new JSONArray();
+    private static JSONArray rankingResults = new JSONArray();
     private int index = 0;
     private JLabel pictureLabel = new JLabel();
     
+    public static JSONArray getRankingResults() {
+        return rankingResults;
+    }
+
+    public static void clearRankingResults() {
+        rankingResults = new JSONArray();
+    }
     
     /**
      * The function creates a new JSON object representing a topic and adds its files to it.
@@ -285,7 +292,7 @@ public class RankLists {
      * @param topicPath The file path of the folder containing the pictures to be ranked.
      * @return The method is returning a JDialog object.
      */
-    public JDialog rankPictures (JFrame window, String topicPath) {
+    public JDialog rankPictures (JFrame window, String topicPath) throws IOException{
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
@@ -351,6 +358,12 @@ public class RankLists {
                             // show splash screen to tell user that ranking ended
                             JDialog ended = new StartWindow().setDialogueWindow(window, "Ranking ended!", null, null, 2);
                             ended.setVisible(true);
+                            try {
+                                new StartWindow().updateRows(window, rankingResults);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            
                         }
                     }
                 });

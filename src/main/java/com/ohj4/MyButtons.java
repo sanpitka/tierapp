@@ -44,7 +44,7 @@ public class MyButtons extends JPanel {
         newButton.setBorder(null);
         newButton.setActionCommand(buttonAction);
         newButton.setForeground(Color.WHITE);
-        newButton.addActionListener(new MyButtonActions(window));
+        newButton.addActionListener(new MyButtonActions(this.window));
         return newButton;
     }
 

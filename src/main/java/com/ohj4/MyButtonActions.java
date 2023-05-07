@@ -41,7 +41,18 @@ public class MyButtonActions implements ActionListener {
             dialog.dispose();
             new StartWindow().changeCategory(category);
 
-        }else if (command == "close") {
+            // open the ranking dialog with the chosen topic
+            String target = command.replace("choose ", "");
+            try {
+                JDialog rankWindow = new RankLists().rankPictures(window,target);
+                rankWindow.setVisible(true);
+            } catch (Exception io) {
+                io.printStackTrace();
+            }
+
+        } else if (command == "close") {
+
+            // close the dialog window
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
@@ -77,7 +88,7 @@ public class MyButtonActions implements ActionListener {
                 JOptionPane.showMessageDialog(window, importSuccessMessage, "Topic imported", JOptionPane.INFORMATION_MESSAGE);
             }
         
-        }else if (command == "menu") {
+        } else if (command == "menu") {
             
             JPopupMenu popupMenu = new StartWindow().setSidebarMenu(window);
             popupMenu.setName("popupmenu");
@@ -89,13 +100,28 @@ public class MyButtonActions implements ActionListener {
             popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
 
-        } else if (command == "new") {
+        } else if (command == "new" || command == "newconfirm") {
 
-            if (new RankLists().startNewRank(window)){
-                JDialog topicSelection = new RankLists().selectTopic(window);
+            if (command == "new" && RankLists.getRankingResults() != null && RankLists.getRankingResults().length() > 0) {
+
+                // there is a ranking in progress, ask for confirmation
+                new RankLists().startNewRank(window);
+                
+            } else if (command == "newconfirm" || (command == "new" && (RankLists.getRankingResults() == null || RankLists.getRankingResults().length() == 0))) {
+
+                // there are no ranking results, or the user has confirmed to select new topic
+                if (command == "newconfirm") {
+                    // close the dialog window
+                    Component source = (Component) e.getSource();
+                    JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+                    dialog.dispose();
+                }
+                RankLists.clearRankingResults(); // clear the ranking results
+                new StartWindow().updateRows(window, null);
+                JDialog topicSelection = new RankLists().selectTopic(this.window);
                 topicSelection.setName("selection");
                 topicSelection.setVisible(true);
-            }  
+            }
             
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(window, command);
