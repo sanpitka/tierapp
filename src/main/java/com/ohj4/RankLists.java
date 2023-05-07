@@ -351,7 +351,7 @@ public class RankLists {
      * @param topicPath The file path of the folder containing the pictures to be ranked.
      * @return The method is returning a JDialog object.
      */
-    public JDialog rankPictures (JFrame dialogOwner, String topicPath) throws IOException{
+    public JDialog rankPictures (JFrame dialogOwner, String topicPath) {
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
@@ -359,7 +359,8 @@ public class RankLists {
         JDialog rankWindow = new JDialog();
         rankWindow.setUndecorated(true); // remove title bar
         rankWindow.setName("rankwindow");
-        rankWindow.setModal(true);
+        rankWindow.setModal(true); // don't allow interaction besides the ranking
+        // TODO Note: by setting this to modal, the use of menu button when ranking is disabled. If it's not set to modal, the ranking window will not close if the user presses menu and selects new ranking topic
 
         if (topicArray != null && topicArray.length() > 0) {
 

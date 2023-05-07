@@ -41,7 +41,7 @@ public class StartWindow implements Runnable {
     JFrame window;
     static JLabel categoryLabel;
     private static JSONArray selectionChoices = new JSONArray();
-    private static JPanel rowPanel = (JPanel)setRows();
+    public static JPanel rowPanel = (JPanel)setRows();
 
     @Override
     public void run() {

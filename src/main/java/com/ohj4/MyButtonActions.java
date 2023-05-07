@@ -3,6 +3,7 @@ package com.ohj4;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -18,6 +19,8 @@ import javax.swing.SwingUtilities;
 public class MyButtonActions implements ActionListener {
 
     JFrame window;
+    JDialog rankingWindow;
+    static String category = "";
 
     public MyButtonActions(JFrame window) {
         this.window = window;
@@ -33,22 +36,15 @@ public class MyButtonActions implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         
         String command = e.getActionCommand();
+        
 
         if (command.startsWith("choose")) {
-            String category = command.replace("choose ", "");
+            category = command.replace("choose ", "");
             Component source = (Component) e.getSource();
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
             new StartWindow().changeCategory(category);
 
-            // open the ranking dialog with the chosen topic
-            String target = command.replace("choose ", "");
-            try {
-                JDialog rankWindow = new RankLists().rankPictures(window, target);
-                rankWindow.setVisible(true);
-            } catch (Exception io) {
-                io.printStackTrace();
-            }
 
         } else if (command == "close") {
 
@@ -70,7 +66,7 @@ public class MyButtonActions implements ActionListener {
             JPopupMenu aboutApp = new StartWindow().showManual(window);
             aboutApp.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
 
-        }else if (command == "import") {
+        } else if (command == "import") {
 
             String importInfoMessage = "<html>To import new topic:" +
                 "<br><br>Choose a folder you would like to import." +
@@ -89,7 +85,7 @@ public class MyButtonActions implements ActionListener {
             }
         
         } else if (command == "menu") {
-            
+
             JPopupMenu popupMenu = new StartWindow().setSidebarMenu(window);
             popupMenu.setName("popupmenu");
             
@@ -99,6 +95,8 @@ public class MyButtonActions implements ActionListener {
             int y = buttonSize.height;
             popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
+
+            
 
         } else if (command == "new" || command == "newconfirm") {
 
@@ -114,14 +112,6 @@ public class MyButtonActions implements ActionListener {
                 Component source = (Component) e.getSource();
                 JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
                 dialog.dispose();
-
-                // if there is a ranking window open, close that too
-                System.out.println(window);
-                JDialog rankwindow = (JDialog) new StartWindow().findComponentByName(window, "rankwindow");
-                System.out.println(rankwindow);
-                if (rankwindow != null) {
-                    rankwindow.dispose();
-                }
                 
                 RankLists.clearRankingResults(window); // clear the ranking results
                 new StartWindow().updateRows(window, null);
@@ -136,8 +126,11 @@ public class MyButtonActions implements ActionListener {
 
         } else if (command == "rank") {
             // 'go rank' pressed
-            // TODO make this happen
-            System.out.println(command + " pressed.");
+            // open the ranking dialog with the chosen topic
+            if (category != null && !category.isEmpty()) {
+                JDialog rankWindow = new RankLists().rankPictures(window, category);
+                rankWindow.setVisible(true);
+            }
 
 
         } else if (command == "screenshot") {
@@ -158,7 +151,22 @@ public class MyButtonActions implements ActionListener {
         Screenshots.filename = listName;
     }
     
-
+    private static ArrayList<Component> superFinder(String name) {
+        ArrayList<Component> found = new ArrayList<Component>();
+        Window[] windows = Window.getWindows();
+        for (Window window : windows) {
+            Container container = window.getFocusCycleRootAncestor();
+            if (container != null) {
+                Component[] components = container.getComponents();
+                for (Component component : components) {
+                    if (name.equals(component.getName())) {
+                        found.add(component);
+                    }
+                }
+            }
+        }
+        return found;
+    }
 }
 
 
