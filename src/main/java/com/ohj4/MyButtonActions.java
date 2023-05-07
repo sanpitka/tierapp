@@ -44,7 +44,7 @@ public class MyButtonActions implements ActionListener {
             // open the ranking dialog with the chosen topic
             String target = command.replace("choose ", "");
             try {
-                JDialog rankWindow = new RankLists().rankPictures(window,target);
+                JDialog rankWindow = new RankLists().rankPictures(window, target);
                 rankWindow.setVisible(true);
             } catch (Exception io) {
                 io.printStackTrace();
@@ -102,21 +102,28 @@ public class MyButtonActions implements ActionListener {
 
         } else if (command == "new" || command == "newconfirm") {
 
-            if (command == "new" && RankLists.getRankingResults() != null && RankLists.getRankingResults().length() > 0) {
+            if (command == "new") {
 
-                // there is a ranking in progress, ask for confirmation
+                // ask for confirmation
                 new RankLists().startNewRank(window);
                 
-            } else if (command == "newconfirm" || (command == "new" && (RankLists.getRankingResults() == null || RankLists.getRankingResults().length() == 0))) {
+            } else if (command == "newconfirm") {
 
-                // there are no ranking results, or the user has confirmed to select new topic
-                if (command == "newconfirm") {
-                    // close the dialog window
-                    Component source = (Component) e.getSource();
-                    JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
-                    dialog.dispose();
+                // user has confirmed to select new topic
+                // close the dialog window
+                Component source = (Component) e.getSource();
+                JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
+                dialog.dispose();
+
+                // if there is a ranking window open, close that too
+                System.out.println(window);
+                JDialog rankwindow = (JDialog) new StartWindow().findComponentByName(window, "rankwindow");
+                System.out.println(rankwindow);
+                if (rankwindow != null) {
+                    rankwindow.dispose();
                 }
-                RankLists.clearRankingResults(); // clear the ranking results
+                
+                RankLists.clearRankingResults(window); // clear the ranking results
                 new StartWindow().updateRows(window, null);
                 JDialog topicSelection = new RankLists().selectTopic(this.window);
                 topicSelection.setName("selection");
@@ -129,6 +136,7 @@ public class MyButtonActions implements ActionListener {
 
         } else if (command == "rank") {
             // 'go rank' pressed
+            // TODO make this happen
             System.out.println(command + " pressed.");
 
 
@@ -150,6 +158,7 @@ public class MyButtonActions implements ActionListener {
         Screenshots.filename = listName;
     }
     
+
 }
 
 

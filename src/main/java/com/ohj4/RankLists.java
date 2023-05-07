@@ -1,6 +1,13 @@
 package com.ohj4;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -13,7 +20,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.json.JSONArray;
@@ -33,8 +51,20 @@ public class RankLists {
         return rankingResults;
     }
 
-    public static void clearRankingResults() {
+    public static void clearRankingResults(JFrame owner) {
         rankingResults = new JSONArray();
+
+        // clear the screen from pitures
+        String[] rowCounter = {"S", "A", "B", "C", "D", "E", "F"};
+        for (int i = 0; i < rowCounter.length; i++) {
+            // get the row component for a rank
+            JPanel row = (JPanel) new StartWindow().findComponentByName(owner, rowCounter[i]);
+             if (row != null) {
+                row.removeAll(); // clear all components inside the row component
+                row.validate();
+                row.repaint();
+             }
+        }
     }
     
     /**
@@ -48,7 +78,7 @@ public class RankLists {
     public JSONArray getRankingTopic(String topicpath) {
         
         JSONArray newTopic = new JSONArray();
-        String folderpath = topicpath + "/";
+        String folderpath = "topics/" + topicpath + "/";
         File topicfolder = new File(folderpath);
 
         // search for files in the topic path
@@ -64,10 +94,7 @@ public class RankLists {
                     if (validatePicture(filename.getPath())) {
 
                         // also check that the file is not the topic icon
-                        String[] pathArray = topicpath.replaceAll("\\\\", "/").split("/");
-                        String topicName = pathArray[1]; // get the topic folder name
-
-                        if (filename.getName().equalsIgnoreCase(topicName + ".jpg") || filename.getName().equalsIgnoreCase(topicName + ".jpeg") || filename.getName().equalsIgnoreCase(topicName + ".png")) {
+                        if (filename.getName().equalsIgnoreCase(topicpath + ".jpg") || filename.getName().equalsIgnoreCase(topicpath + ".jpeg") || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
 
                             break;
 
@@ -195,6 +222,16 @@ public class RankLists {
         return topicSelection;
     }
 
+    /**
+     * This function sets the topic image for a given topic name, and if no image exists, it creates a
+     * new one with the topic name as the text.
+     * 
+     * @param topicName A String representing the name of the topic for which an image is being set or
+     * created.
+     * @param window A JFrame object representing the window in which any error messages will be
+     * displayed.
+     * @return The method is returning a File object.
+     */
     public File setTopicImage(String topicName, JFrame window) {
         String imgNamePng = topicName + ".png";
         String imgNameJpg = topicName + ".jpg";
@@ -224,11 +261,33 @@ public class RankLists {
         return imgFile;
     }
 
+    /**
+     * The function displays a confirmation dialog box asking for permission to start a new ranking and
+     * returns a boolean value.
+     * 
+     * @param window A JFrame object representing the parent window in which the confirmation dialog
+     * will be displayed.
+     * @return A boolean value of true is being returned.
+     */
     public boolean startNewRank(JFrame window) {
-        //TODO: Kysy lupa uuden rankingin aloittamiseen
+        //ask for permission to start new ranking
+        String[] buttonlabels = {"Cancel", "Ok"};
+        String[] buttonactions = {"close", "newconfirm"};
+
+        JDialog confirmation = new StartWindow().setDialogueWindow(window, "<html>Are you sure you want<br>to start a new rank?</html>", buttonlabels, buttonactions, 0);
+        confirmation.setVisible(true);
         return true;
     }
 
+    /**
+     * This function allows the user to select a folder and copies its contents to a destination folder
+     * within the program's directory.
+     * 
+     * @param window The JFrame window is the graphical user interface window that the user interacts
+     * with. It is passed as a parameter to the method so that the JFileChooser dialog can be displayed
+     * on top of it.
+     * @return A boolean value is being returned.
+     */
     public static boolean importFiles(JFrame window) {
         JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new java.io.File("."));
@@ -288,44 +347,136 @@ public class RankLists {
      * Creates a dialog window for ranking pictures and allows the user to rank each
      * picture using buttons.
      * 
-     * @param window The JFrame window that the JDialog will be displayed on top of.
+     * @param dialogOwner The JFrame window that the JDialog will be displayed on top of.
      * @param topicPath The file path of the folder containing the pictures to be ranked.
      * @return The method is returning a JDialog object.
      */
-    public JDialog rankPictures (JFrame window, String topicPath) throws IOException{
+    public JDialog rankPictures (JFrame dialogOwner, String topicPath) throws IOException{
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
         
         JDialog rankWindow = new JDialog();
         rankWindow.setUndecorated(true); // remove title bar
+        rankWindow.setName("rankwindow");
+        rankWindow.setModal(true);
 
         if (topicArray != null && topicArray.length() > 0) {
 
-            rankWindow.setMinimumSize(new Dimension(600, 500));
-            rankWindow.setMaximumSize(new Dimension(600, 600));
-            rankWindow.setLayout(new BorderLayout(5, 5));
+            // get the width of the dialogOwner
+            int width = dialogOwner.getWidth() - 15;
+            int height = dialogOwner.getHeight() - 123;
+
+            rankWindow.setLayout(new BorderLayout());
+            rankWindow.setSize(new Dimension(width, height));
             rankWindow.getContentPane().setBackground(Color.LIGHT_GRAY);
             rankWindow.setForeground(Color.BLACK);
             rankWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-            rankWindow.setLocationRelativeTo(window);
+
+            // set location to right under the north panels
+            int x = 8;
+            int y = 120;
+            rankWindow.setLocationRelativeTo(dialogOwner);
+            rankWindow.setLocation(x, y);
             
             // display first picture to rank
-            // TODO scale the picture to fit
             String filename = topicArray.getJSONObject(index).getString("name");
             ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-            pictureLabel = new JLabel(currentPicture);
+            Image currentImage = currentPicture.getImage(); // get the image
+
+            // scale the picture to be at max 50% of the window
+            int scaleHeight = rankWindow.getHeight()/2;
+            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
+
+            pictureLabel = new JLabel(scaledIcon);
+            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
             rankWindow.add(pictureLabel, BorderLayout.CENTER);
 
+            // set a panel for ranking letters and Undo & Skip buttons
+            JPanel lowerPanel = new JPanel();
+            lowerPanel.setLayout(new GridLayout(2,1));
+            lowerPanel.setBackground(Color.LIGHT_GRAY);
+            
             // display ranking letters
             JPanel buttonRow = new JPanel();
             buttonRow.setLayout(new GridLayout(1,7));
-            buttonRow.setPreferredSize(new Dimension(600,130));
+            buttonRow.setPreferredSize(new Dimension(600,80));
             buttonRow.setBackground(Color.WHITE);
-            rankWindow.add(buttonRow, BorderLayout.SOUTH);
+            lowerPanel.add(buttonRow);
             JSONArray labels = createLabelList();
 
-            // create buttons individually to add ActionListener
+            // display Undo & Skip buttons
+            JPanel lowerbuttons = new JPanel();
+            lowerbuttons.setBackground(Color.LIGHT_GRAY);
+            JButton undo = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Undo");
+            // don't let undo, if the ranking has just started
+            if (index == 0) {
+                undo.setEnabled(false);
+            }
+            undo.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent u) {
+                    if (index > 0) {
+                        index--;
+
+                        if (index < topicArray.length()) {
+                            // create new picture and add it to the rankWindow
+                            String filename = topicArray.getJSONObject(index).getString("name");
+                            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
+                            Image currentImage = currentPicture.getImage();
+
+                            // scale the picture to be at max 50% of the window
+                            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
+
+                            pictureLabel.setIcon(scaledIcon);
+                            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
+                            pictureLabel.validate();
+                            pictureLabel.repaint();
+                            
+                            rankWindow.revalidate();
+                            rankWindow.repaint();
+                        
+                        }
+                    }
+                }
+            });
+            
+            JButton skip = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Skip");
+            skip.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent s) {
+                    
+                    JSONObject skipped = topicArray.getJSONObject(index);
+                    topicArray.put(skipped);
+                    index++;
+                    undo.setEnabled(true);
+
+                    if (index < topicArray.length()) {
+                        // create new picture and add it to the rankWindow
+                        String filename = topicArray.getJSONObject(index).getString("name");
+                        ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
+                        Image currentImage = currentPicture.getImage();
+
+                        // scale the picture to be at max 50% of the window
+                        ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
+
+                        pictureLabel.setIcon(scaledIcon);
+                        pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
+                        pictureLabel.validate();
+                        pictureLabel.repaint();
+                        
+                        rankWindow.revalidate();
+                        rankWindow.repaint();
+                    
+                    } 
+                }
+            });
+            lowerbuttons.add(undo);
+            lowerbuttons.add(skip);
+            lowerPanel.add(lowerbuttons);
+            rankWindow.add(lowerPanel, BorderLayout.SOUTH);
+
+            // create ranking letter buttons individually to add ActionListener
             for (int i = 0; i < labels.length(); i++) { 
                 JButton button = createRankButton(labels.getJSONObject(i).getString("rank"), Color.decode(labels.getJSONObject(i).getString("color")));
                 buttonRow.add(button);
@@ -340,26 +491,35 @@ public class RankLists {
                         
                         // move to next picture
                         index++;
+                        undo.setEnabled(true);
 
                         if (index < topicArray.length()) {
                             // create new picture and add it to the rankWindow
                             String filename = topicArray.getJSONObject(index).getString("name");
                             ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-                            pictureLabel.setIcon(currentPicture);
-                            rankWindow.add(pictureLabel, BorderLayout.CENTER);
+                            Image currentImage = currentPicture.getImage();
+
+                            // scale the picture to be at max 50% of the window
+                            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
+
+                            pictureLabel.setIcon(scaledIcon);
+                            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
+                            pictureLabel.validate();
+                            pictureLabel.repaint();
                             
                             rankWindow.revalidate();
                             rankWindow.repaint();
+                        
                         } else {
                             // end of ranking, close rankWindow
                             index = 0;
                             rankWindow.dispose();
 
                             // show splash screen to tell user that ranking ended
-                            JDialog ended = new StartWindow().setDialogueWindow(window, "Ranking ended!", null, null, 2);
+                            JDialog ended = new StartWindow().setDialogueWindow(dialogOwner, "Ranking ended!", null, null, 2);
                             ended.setVisible(true);
                             try {
-                                new StartWindow().updateRows(window, rankingResults);
+                                new StartWindow().updateRows(dialogOwner, rankingResults);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -372,8 +532,11 @@ public class RankLists {
 
             } else {
                 // topic has no pictures to rank
-                JDialog error = new StartWindow().setDialogueWindow(window, "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>", null, null, 3);
+                JDialog error = new StartWindow().setDialogueWindow(dialogOwner, "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>", null, null, 3);
+                error.setModal(false);
                 error.setVisible(true);
+                rankWindow.setModal(false);
+                
                 rankWindow.dispose();
 
             }
@@ -479,4 +642,5 @@ public class RankLists {
 
         return labels;
     }
+
 }

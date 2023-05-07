@@ -65,4 +65,19 @@ public class MyButtons extends JPanel {
         return newButton;
     }
 
+    public JButton setDialogButtonWithoutAction(String buttonText) {
+
+        JButton newButton = new JButton(buttonText);
+        newButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        newButton.setBackground(Color.LIGHT_GRAY);
+        newButton.setForeground(Color.BLACK);
+        newButton.setFocusPainted(false);
+        newButton.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(Color.BLACK),
+            BorderFactory.createEmptyBorder(5,10,5,10)
+        ));
+
+        return newButton;
+    }
+
 }
