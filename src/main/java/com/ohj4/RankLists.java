@@ -163,7 +163,6 @@ public class RankLists {
         topicSelection.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         topicSelection.setLocationRelativeTo(window);
 
-        //Create a 
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(Color.LIGHT_GRAY);
         JLabel titleLabel = new JLabel("Choose a topic you want to rank");
@@ -171,10 +170,12 @@ public class RankLists {
         titlePanel.add(titleLabel);
 
         JPanel selectionPanel = new JPanel();
+        String closeButton = "Cancel";
         selectionPanel.setLayout(new BoxLayout(selectionPanel, BoxLayout.Y_AXIS));
         selectionPanel.setBackground(Color.LIGHT_GRAY);
 
         File topicsFolder = new File("topics");
+        int topics = 0;
         if (topicsFolder.isDirectory()) {
             for (File folder : topicsFolder.listFiles()) {
                 if (folder.isDirectory()) {
@@ -196,6 +197,7 @@ public class RankLists {
                         row.setBorder(BorderFactory.createLineBorder(Color.black));
 
                         selectionPanel.add(row);
+                        topics++;
 
                     } catch (IOException e) {
                         JOptionPane.showMessageDialog(titlePanel, "An error occurred in reading images: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -206,6 +208,14 @@ public class RankLists {
                 }
             }
         }
+        if (topics == 0) {
+            JLabel emptyFolderLabel = new JLabel("<html>There are no topics to rank yet. <br>Go import some!" +
+                "<br><br>You can import topics by clicking the Import Files <br>button in Menu.</html>");
+            emptyFolderLabel.setFont(new Font("Arial", Font.PLAIN, 18));
+            selectionPanel.add(emptyFolderLabel);
+            closeButton = "OK";
+        }
+        
         // add a scrollbar for easier browsing
         JScrollPane scrollPane = new JScrollPane(selectionPanel);
         scrollPane.setPreferredSize(new Dimension(450, 300));
@@ -217,7 +227,7 @@ public class RankLists {
         // add a cancel button
         JPanel buttonPanel = new JPanel(new BorderLayout());
         buttonPanel.setBackground(Color.LIGHT_GRAY);
-        buttonPanel.add(new MyButtons(window).setDialogButton("Cancel", "close"), BorderLayout.EAST);
+        buttonPanel.add(new MyButtons(window).setDialogButton(closeButton, "close"), BorderLayout.EAST);
         topicSelection.add(buttonPanel);
 
         return topicSelection;
@@ -320,7 +330,9 @@ public class RankLists {
         File[] files = sourceFolder.listFiles();
 
         for (File file : files) {
-            if (file.getName().endsWith(".jpg") || file.getName().endsWith(".jpeg") || file.getName().endsWith(".png")) {
+            if (file.getName().endsWith(".jpg") || 
+                file.getName().endsWith(".jpeg") || 
+                file.getName().endsWith(".png")) {
                            
                 FileInputStream inputStream;
                 try {
@@ -348,7 +360,7 @@ public class RankLists {
      * Creates a dialog window for ranking pictures and allows the user to rank each
      * picture using buttons.
      * 
-     * @param dialogOwner The JFrame window that the JDialog will be displayed on top of.
+     * @param dialogOwner The JFrame window that the JDialog will be displayed on top.
      * @param topicPath The file path of the folder containing the pictures to be ranked.
      * @return The method is returning a JDialog object.
      */
@@ -492,7 +504,9 @@ public class RankLists {
                         // record ranking for current picture
                         String ranking = ((JButton) b.getSource()).getText();
                         topicArray.getJSONObject(index).put("rank", ranking);
+                        System.out.println(topicArray);
                         rankingResults.put(topicArray.getJSONObject(index));
+                        System.out.println(rankingResults);
                         
                         // move to next picture
                         index++;
@@ -537,9 +551,8 @@ public class RankLists {
 
             } else {
                 // topic has no pictures to rank
-                JDialog error = new StartWindow().setDialogueWindow(dialogOwner, "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>", null, null, 3);
-                error.setModal(false);
-                error.setVisible(true);
+                String emptyFolderMessage = "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>";
+                JOptionPane.showMessageDialog(dialogOwner, emptyFolderMessage, "Error", JOptionPane.ERROR_MESSAGE);
                 rankWindow.setModal(false);
                 
                 rankWindow.dispose();

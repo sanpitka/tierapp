@@ -57,7 +57,7 @@ public class Screenshots {
                     oneShot.add(label, BorderLayout.SOUTH);
                     screenshotsPanel.add(oneShot);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(window, "Error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -91,8 +91,7 @@ public class Screenshots {
                 "<br>" + "to the Screenshots folder!" + "</html>", null, null, 1);
             ssMessage.setVisible(true);
         } catch (Exception e1) {
-            JOptionPane.showMessageDialog(window, "There was an exception, try again later.", "Error", JOptionPane.ERROR_MESSAGE);
-            e1.printStackTrace();
+            JOptionPane.showMessageDialog(window, "Error: " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -149,8 +148,7 @@ public class Screenshots {
             openedShot.add(textLabel, BorderLayout.NORTH);
             openedShot.add(imgPanel, BorderLayout.WEST);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(dialogOwner, "There was an error in I/O.", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(dialogOwner, "There was an error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
         // add buttons
