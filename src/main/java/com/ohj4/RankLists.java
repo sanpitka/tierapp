@@ -38,7 +38,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Contains all the logic in getting ranking topics and ranking pictures of a specific topic.
+ * Contains all the logic in getting ranking topics and ranking pictures of a
+ * specific topic.
  * 
  */
 public class RankLists {
@@ -46,7 +47,7 @@ public class RankLists {
     private static JSONArray rankingResults = new JSONArray();
     private int index = 0;
     private JLabel pictureLabel = new JLabel();
-    
+
     public static JSONArray getRankingResults() {
         return rankingResults;
     }
@@ -55,48 +56,52 @@ public class RankLists {
         rankingResults = new JSONArray();
 
         // clear the screen from pitures
-        String[] rowCounter = {"S", "A", "B", "C", "D", "E", "F"};
+        String[] rowCounter = { "S", "A", "B", "C", "D", "E", "F" };
         for (int i = 0; i < rowCounter.length; i++) {
             // get the row component for a rank
             JPanel row = (JPanel) new StartWindow().findComponentByName(owner, rowCounter[i]);
-             if (row != null) {
+            if (row != null) {
                 row.removeAll(); // clear all components inside the row component
                 row.validate();
                 row.repaint();
-             }
+            }
         }
     }
-    
+
     /**
-     * The function creates a new JSON object representing a topic and adds its files to it.
+     * The function creates a new JSON object representing a topic and adds its
+     * files to it.
      * 
      * @param topicname A string representing the name of the topic to be created.
-     * @return A JSONObject containing information about a new topic, including its name and a
-     * JSONArray of files associated with it. If the topic folder does not exist, it will be created.
-     * If there is an error opening the topics folder, null will be returned.
+     * @return A JSONObject containing information about a new topic, including its
+     *         name and a
+     *         JSONArray of files associated with it. If the topic folder does not
+     *         exist, it will be created.
+     *         If there is an error opening the topics folder, null will be
+     *         returned.
      */
     public JSONArray getRankingTopic(String topicpath) {
-        
+
         JSONArray newTopic = new JSONArray();
         String folderpath = "topics/" + topicpath + "/";
         File topicfolder = new File(folderpath);
 
         // search for files in the topic path
-        try { 
+        try {
             if (topicfolder.exists() && topicfolder.isDirectory()) {
 
                 File[] filenames = topicfolder.listFiles();
 
                 // add all filenames to the topic array
-                for (File filename: filenames) {
+                for (File filename : filenames) {
 
                     // validate that the file is jp(e)g or png first, then add to list
                     if (validatePicture(filename.getPath())) {
 
                         // also check that the file is not the topic icon
-                        if (filename.getName().equalsIgnoreCase(topicpath + ".jpg") 
-                            || filename.getName().equalsIgnoreCase(topicpath + ".jpeg") 
-                            || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
+                        if (filename.getName().equalsIgnoreCase(topicpath + ".jpg")
+                                || filename.getName().equalsIgnoreCase(topicpath + ".jpeg")
+                                || filename.getName().equalsIgnoreCase(topicpath + ".png")) {
                             continue;
 
                         } else {
@@ -105,7 +110,6 @@ public class RankLists {
                             file.put("rank", "");
                             newTopic.put(file);
                         }
-   
                     }
                 }
             }
@@ -114,7 +118,7 @@ public class RankLists {
             System.out.println("Error opening topics folder " + e);
             return null;
         }
-        
+
         return newTopic;
 
     }
@@ -122,10 +126,13 @@ public class RankLists {
     /**
      * The function validates if a file path is a PNG or JPEG image.
      * 
-     * @param filePathToTest The file path of the picture that needs to be validated.
-     * @return The method is returning a boolean value, either true or false, depending on whether the
-     * file at the given file path is a PNG or JPEG image. If the file is not an image or is of a
-     * different image format, the method returns false.
+     * @param filePathToTest The file path of the picture that needs to be
+     *                       validated.
+     * @return The method is returning a boolean value, either true or false,
+     *         depending on whether the
+     *         file at the given file path is a PNG or JPEG image. If the file is
+     *         not an image or is of a
+     *         different image format, the method returns false.
      */
     private boolean validatePicture(String filePathToTest) throws IOException {
 
@@ -146,13 +153,15 @@ public class RankLists {
     }
 
     /**
-     * Opens a window that shows a list of theme icons and names and lets user choose a new topic to rank. 
+     * Opens a window that shows a list of theme icons and names and lets user
+     * choose a new topic to rank.
+     * 
      * @param window the main
      * @return topic selection window
      */
     public JDialog selectTopic(JFrame window) {
 
-        //Create a topic selection window on the main frame
+        // Create a topic selection window on the main frame
         JDialog topicSelection = new JDialog();
         topicSelection.setUndecorated(true); // remove title bar
         topicSelection.setMinimumSize(new Dimension(500, 400));
@@ -193,29 +202,30 @@ public class RankLists {
 
                         row.add(imgLabel, BorderLayout.WEST);
                         row.add(txtLabel, BorderLayout.CENTER);
-                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + labeltext), BorderLayout.EAST);
+                        row.add(new MyButtons(window).setDialogButton("Choose", "choose " + labeltext),
+                                BorderLayout.EAST);
                         row.setBorder(BorderFactory.createLineBorder(Color.black));
 
                         selectionPanel.add(row);
                         topics++;
 
                     } catch (IOException e) {
-                        JOptionPane.showMessageDialog(titlePanel, "An error occurred in reading images: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                        
-                    }
-                    
+                        JOptionPane.showMessageDialog(titlePanel,
+                                "An error occurred in reading images: " + e.getMessage(), "Error",
+                                JOptionPane.ERROR_MESSAGE);
 
+                    }
                 }
             }
         }
         if (topics == 0) {
             JLabel emptyFolderLabel = new JLabel("<html>There are no topics to rank yet. <br>Go import some!" +
-                "<br><br>You can import topics by clicking the Import Files <br>button in Menu.</html>");
+                    "<br><br>You can import topics by clicking the Import Files <br>button in Menu.</html>");
             emptyFolderLabel.setFont(new Font("Arial", Font.PLAIN, 18));
             selectionPanel.add(emptyFolderLabel);
             closeButton = "OK";
         }
-        
+
         // add a scrollbar for easier browsing
         JScrollPane scrollPane = new JScrollPane(selectionPanel);
         scrollPane.setPreferredSize(new Dimension(450, 300));
@@ -234,24 +244,27 @@ public class RankLists {
     }
 
     /**
-     * This function sets the topic image for a given topic name, and if no image exists, it creates a
+     * This function sets the topic image for a given topic name, and if no image
+     * exists, it creates a
      * new one with the topic name as the text.
      * 
-     * @param topicName A String representing the name of the topic for which an image is being set or
-     * created.
-     * @param window A JFrame object representing the window in which any error messages will be
-     * displayed.
+     * @param topicName A String representing the name of the topic for which an
+     *                  image is being set or
+     *                  created.
+     * @param window    A JFrame object representing the window in which any error
+     *                  messages will be
+     *                  displayed.
      * @return The method is returning a File object.
      */
     public File setTopicImage(String topicName, JFrame window) {
         String imgNamePng = topicName + ".png";
         String imgNameJpg = topicName + ".jpg";
-        File imgFile = new File("topics/" + topicName + "/" +imgNamePng);
+        File imgFile = new File("topics/" + topicName + "/" + imgNamePng);
         if (!imgFile.exists()) {
-            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+            imgFile = new File("topics/" + topicName + "/" + imgNameJpg);
         }
         if (!imgFile.exists()) {
-            //If there is no topic image, create one.
+            // If there is no topic image, create one.
             BufferedImage newImage = new BufferedImage(100, 80, BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = newImage.createGraphics();
             g2d.setColor(Color.WHITE);
@@ -262,63 +275,72 @@ public class RankLists {
             g2d.setColor(Color.BLACK);
             g2d.drawString(topicName, 5, 45);
             g2d.dispose();
-            imgFile = new File("topics/" + topicName + "/" +imgNameJpg);
+            imgFile = new File("topics/" + topicName + "/" + imgNameJpg);
             try {
                 ImageIO.write(newImage, "jpg", imgFile);
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error",
+                        JOptionPane.ERROR_MESSAGE);
             }
         }
         return imgFile;
     }
 
     /**
-     * The function displays a confirmation dialog box asking for permission to start a new ranking and
+     * The function displays a confirmation dialog box asking for permission to
+     * start a new ranking and
      * returns a boolean value.
      * 
-     * @param window A JFrame object representing the parent window in which the confirmation dialog
-     * will be displayed.
+     * @param window A JFrame object representing the parent window in which the
+     *               confirmation dialog
+     *               will be displayed.
      * @return A boolean value of true is being returned.
      */
     public boolean startNewRank(JFrame window) {
-        //ask for permission to start new ranking
-        String[] buttonlabels = {"Cancel", "Ok"};
-        String[] buttonactions = {"close", "newconfirm"};
+        // ask for permission to start new ranking
+        String[] buttonlabels = { "Cancel", "Ok" };
+        String[] buttonactions = { "close", "newconfirm" };
 
-        JDialog confirmation = new StartWindow().setDialogueWindow(window, "<html>Are you sure you want<br>to start a new rank?</html>", buttonlabels, buttonactions, 0);
+        JDialog confirmation = new StartWindow().setDialogueWindow(window,
+                "<html>Are you sure you want<br>to start a new rank?</html>", buttonlabels, buttonactions, 0);
         confirmation.setVisible(true);
         return true;
     }
 
     /**
-     * This function allows the user to select a folder and copies its contents to a destination folder
+     * This function allows the user to select a folder and copies its contents to a
+     * destination folder
      * within the program's directory.
      * 
-     * @param window The JFrame window is the graphical user interface window that the user interacts
-     * with. It is passed as a parameter to the method so that the JFileChooser dialog can be displayed
-     * on top of it.
+     * @param window The JFrame window is the graphical user interface window that
+     *               the user interacts
+     *               with. It is passed as a parameter to the method so that the
+     *               JFileChooser dialog can be displayed
+     *               on top of it.
      * @return A boolean value is being returned.
      */
     public static boolean importFiles(JFrame window) {
         JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new java.io.File("."));
-            chooser.setDialogTitle("Select Folder");
-            chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        chooser.setCurrentDirectory(new java.io.File("."));
+        chooser.setDialogTitle("Select Folder");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            if (chooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
-                File sourceFolder = chooser.getSelectedFile();
-                File destinationFolder = new File("topics/" + sourceFolder.getName());
-                return copyFolder(sourceFolder, destinationFolder, window);
-            } 
+        if (chooser.showOpenDialog(window) == JFileChooser.APPROVE_OPTION) {
+            File sourceFolder = chooser.getSelectedFile();
+            File destinationFolder = new File("topics/" + sourceFolder.getName());
+            return copyFolder(sourceFolder, destinationFolder, window);
+        }
         return false;
     }
 
     /**
      * Imports images to topics folder.
-     * Creates a folder for new topic and copies JPG and PNG files there from the source folder.
-     * @param sourceFolder the folder the user wants to import
+     * Creates a folder for new topic and copies JPG and PNG files there from the
+     * source folder.
+     * 
+     * @param sourceFolder      the folder the user wants to import
      * @param destinationFolder the folder where images are copied
-     * @param window the main window
+     * @param window            the main window
      * @return true if succeeded, false otherwise
      */
     private static boolean copyFolder(File sourceFolder, File destinationFolder, JFrame window) {
@@ -326,29 +348,30 @@ public class RankLists {
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
         }
-        
+
         File[] files = sourceFolder.listFiles();
 
         for (File file : files) {
-            if (file.getName().endsWith(".jpg") || 
-                file.getName().endsWith(".jpeg") || 
-                file.getName().endsWith(".png")) {
-                           
+            if (file.getName().endsWith(".jpg") ||
+                    file.getName().endsWith(".jpeg") ||
+                    file.getName().endsWith(".png")) {
+
                 FileInputStream inputStream;
                 try {
                     inputStream = new FileInputStream(file);
                     FileOutputStream outputStream = new FileOutputStream(new File(destinationFolder, file.getName()));
-                    
+
                     byte[] buffer = new byte[4096];
                     int length;
                     while ((length = inputStream.read(buffer)) > 0) {
                         outputStream.write(buffer, 0, length);
                     }
-                    
+
                     inputStream.close();
                     outputStream.close();
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
             }
@@ -360,21 +383,25 @@ public class RankLists {
      * Creates a dialog window for ranking pictures and allows the user to rank each
      * picture using buttons.
      * 
-     * @param dialogOwner The JFrame window that the JDialog will be displayed on top.
-     * @param topicPath The file path of the folder containing the pictures to be ranked.
+     * @param dialogOwner The JFrame window that the JDialog will be displayed on
+     *                    top.
+     * @param topicPath   The file path of the folder containing the pictures to be
+     *                    ranked.
      * @return The method is returning a JDialog object.
      */
-    public JDialog rankPictures (JFrame dialogOwner, String topicPath) {
+    public JDialog rankPictures(JFrame dialogOwner, String topicPath) {
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
-        
+
         JDialog rankWindow = new JDialog();
         rankWindow.setUndecorated(true); // remove title bar
         rankWindow.setName("rankwindow");
         rankWindow.setModal(true); // don't allow interaction besides the ranking
-        // Note: by setting this to modal, the use of menu button when ranking is disabled. 
-        // If it's not set to modal, the ranking window will not close if the user presses menu and selects new ranking topic
+        // Note: by setting this to modal, the use of menu button when ranking is
+        // disabled.
+        // If it's not set to modal, the ranking window will not close if the user
+        // presses menu and selects new ranking topic
 
         if (topicArray != null && topicArray.length() > 0) {
 
@@ -393,14 +420,14 @@ public class RankLists {
             int y = 120;
             rankWindow.setLocationRelativeTo(dialogOwner);
             rankWindow.setLocation(x, y);
-            
+
             // display first picture to rank
             String filename = topicArray.getJSONObject(index).getString("name");
             ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
             Image currentImage = currentPicture.getImage(); // get the image
 
             // scale the picture to be at max 50% of the window
-            int scaleHeight = rankWindow.getHeight()/2;
+            int scaleHeight = rankWindow.getHeight() / 2;
             ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
 
             pictureLabel = new JLabel(scaledIcon);
@@ -409,13 +436,13 @@ public class RankLists {
 
             // set a panel for ranking letters and Undo & Skip buttons
             JPanel lowerPanel = new JPanel();
-            lowerPanel.setLayout(new GridLayout(2,1));
+            lowerPanel.setLayout(new GridLayout(2, 1));
             lowerPanel.setBackground(Color.LIGHT_GRAY);
-            
+
             // display ranking letters
             JPanel buttonRow = new JPanel();
-            buttonRow.setLayout(new GridLayout(1,7));
-            buttonRow.setPreferredSize(new Dimension(600,80));
+            buttonRow.setLayout(new GridLayout(1, 7));
+            buttonRow.setPreferredSize(new Dimension(600, 80));
             buttonRow.setBackground(Color.WHITE);
             lowerPanel.add(buttonRow);
             JSONArray labels = createLabelList();
@@ -437,28 +464,30 @@ public class RankLists {
                             undo.setEnabled(false);
                         }
                         rankingResults.remove(index);
-                        showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
+                        showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
                     }
                 }
             });
-            
+
             JButton skip = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Skip");
             skip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent s) {
                     index++;
                     undo.setEnabled(true);
-                    showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
+                    showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
                 }
             });
+
             lowerbuttons.add(undo);
             lowerbuttons.add(skip);
             lowerPanel.add(lowerbuttons);
             rankWindow.add(lowerPanel, BorderLayout.SOUTH);
 
             // create ranking letter buttons individually to add ActionListener
-            for (int i = 0; i < labels.length(); i++) { 
-                JButton button = createRankButton(labels.getJSONObject(i).getString("rank"), Color.decode(labels.getJSONObject(i).getString("color")));
+            for (int i = 0; i < labels.length(); i++) {
+                JButton button = createRankButton(labels.getJSONObject(i).getString("rank"),
+                        Color.decode(labels.getJSONObject(i).getString("color")));
                 buttonRow.add(button);
                 button.addActionListener(new ActionListener() {
                     @Override
@@ -468,33 +497,43 @@ public class RankLists {
                         String ranking = ((JButton) b.getSource()).getText();
                         topicArray.getJSONObject(index).put("rank", ranking);
                         rankingResults.put(topicArray.getJSONObject(index));
-                        
+
                         // move to next picture
                         index++;
                         undo.setEnabled(true);
-                        showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
+                        showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
 
                     }
                 });
-                
-                }
-
-            } else {
-                // topic has no pictures to rank
-                String emptyFolderMessage = "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>";
-                JOptionPane.showMessageDialog(dialogOwner, emptyFolderMessage, "Empty folder", JOptionPane.ERROR_MESSAGE);
-                rankWindow.setModal(false);
-                
-                rankWindow.dispose();
 
             }
-        
+
+        } else {
+            // topic has no pictures to rank
+            String emptyFolderMessage = "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>";
+            JOptionPane.showMessageDialog(dialogOwner, emptyFolderMessage, "Empty folder", JOptionPane.ERROR_MESSAGE);
+            rankWindow.setModal(false);
+
+            rankWindow.dispose();
+
+        }
+
         return rankWindow;
-        
+
     }
 
-    private void showNextImage(JSONArray topicArray, int scaleHeight, JDialog rankWindow, JFrame dialogOwner) {
-        
+    /**
+     * Shows an image of the next item to be ranked.
+     * 
+     * @param topicArray  the JSONArray for all the items of the chosen topic and
+     *                    their grades
+     * @param scaleHeight the desirable height of the image
+     * @param rankWindow  the JDialog window where the ranking happens
+     * @param dialogOwner The JFrame window that the JDialog will be displayed on
+     *                    top.
+     */
+    private void showNextItem(JSONArray topicArray, int scaleHeight, JDialog rankWindow, JFrame dialogOwner) {
+
         if (index < topicArray.length()) {
             // create new picture and add it to the rankWindow
             String filename = topicArray.getJSONObject(index).getString("name");
@@ -508,10 +547,10 @@ public class RankLists {
             pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
             pictureLabel.validate();
             pictureLabel.repaint();
-            
+
             rankWindow.revalidate();
             rankWindow.repaint();
-        
+
         } else {
             // end of ranking, close rankWindow
             index = 0;
@@ -525,14 +564,14 @@ public class RankLists {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+
         }
     }
 
     /**
      * Creates the labels for ranks as buttons in the ranking window.
      * 
-     * @param label The text that will be displayed on the button.
+     * @param label           The text that will be displayed on the button.
      * @param backgroundColor The background color of the button.
      * @return A JButton object is being returned.
      */
@@ -542,10 +581,10 @@ public class RankLists {
         newButton.setForeground(Color.WHITE);
         newButton.setBackground(backgroundColor);
         newButton.setFont(buttonFont);
-        newButton.setBorder(BorderFactory.createEmptyBorder(7,20,20,20));
+        newButton.setBorder(BorderFactory.createEmptyBorder(7, 20, 20, 20));
         newButton.setHorizontalTextPosition(SwingConstants.CENTER);
         newButton.setVerticalTextPosition(SwingConstants.CENTER);
-        
+
         // Set the action command of the button to its label
         newButton.setActionCommand(label);
 
@@ -553,13 +592,17 @@ public class RankLists {
     }
 
     /**
-     * This Java function reads an image file from a given filepath and returns the image as an object.
+     * This Java function reads an image file from a given filepath and returns the
+     * image as an object.
      * 
-     * @param filepath The filepath parameter is a String that represents the path to the image file
-     * that needs to be displayed.
-     * @return The method is returning an Image object. If the file exists and is not a directory, it
-     * reads the image from the file and returns it. If the file does not exist or is a directory, it
-     * returns null. If an exception occurs, it also returns null.
+     * @param filepath The filepath parameter is a String that represents the path
+     *                 to the image file
+     *                 that needs to be displayed.
+     * @return The method is returning an Image object. If the file exists and is
+     *         not a directory, it
+     *         reads the image from the file and returns it. If the file does not
+     *         exist or is a directory, it
+     *         returns null. If an exception occurs, it also returns null.
      */
     private Image displayPicture(String filepath) {
 
@@ -569,7 +612,7 @@ public class RankLists {
             if (file.exists() && !file.isDirectory()) {
 
                 Image picture = ImageIO.read(file);
-                return picture; 
+                return picture;
 
             } else {
                 return null;
@@ -583,8 +626,10 @@ public class RankLists {
     /**
      * Helper method for creating label buttons.
      * 
-     * @return The method `createLabelList()` returns a `JSONArray` object containing a list of
-     * `JSONObject` objects, each representing a label with a color and a rank.
+     * @return The method `createLabelList()` returns a `JSONArray` object
+     *         containing a list of
+     *         `JSONObject` objects, each representing a label with a color and a
+     *         rank.
      */
     private JSONArray createLabelList() {
 

@@ -12,7 +12,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
 /**
- * The class MyButtonActions implements ActionListener and defines actions for different button
+ * The class MyButtonActions implements ActionListener and defines actions for
+ * different button
  * commands.
  */
 public class MyButtonActions implements ActionListener {
@@ -33,9 +34,8 @@ public class MyButtonActions implements ActionListener {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        
+
         String command = e.getActionCommand();
-        
 
         if (command.startsWith("choose")) {
             category = command.replace("choose ", "");
@@ -43,7 +43,6 @@ public class MyButtonActions implements ActionListener {
             JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
             dialog.dispose();
             new StartWindow().changeCategory(category);
-
 
         } else if (command == "close") {
 
@@ -59,7 +58,7 @@ public class MyButtonActions implements ActionListener {
             if (deleted) {
                 dialog.dispose();
             }
-        
+
         } else if (command == "help") {
             JPopupMenu aboutApp = new StartWindow().showManual(window);
             aboutApp.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
@@ -67,26 +66,28 @@ public class MyButtonActions implements ActionListener {
         } else if (command == "import") {
 
             String importInfoMessage = "<html>To import new topic:" +
-                "<br><br>Choose a folder you would like to import." +
-                "<br>A folder and JPG, JPEG and PNG files inside the folder" +
-                "<br>are imported into Topics folder." +
-                "<br><br>To set a theme image for topic, name the theme image" +
-                "<br>according to the folder: for example the theme image of " +
-                "<br>the folder Folder has to be either Folder.jpg or Folder.png.";
+                    "<br><br>Choose a folder you would like to import." +
+                    "<br>A folder and JPG, JPEG and PNG files inside the folder" +
+                    "<br>are imported into Topics folder." +
+                    "<br><br>To set a theme image for topic, name the theme image" +
+                    "<br>according to the folder: for example the theme image of " +
+                    "<br>the folder Folder has to be either Folder.jpg or Folder.png.";
 
             String importSuccessMessage = "<html>New topic imported successfully!" +
-                "<br>Choose Menu -> New to open your new topic.";
+                    "<br>Choose Menu -> New to open your new topic.";
 
-            JOptionPane.showMessageDialog(window, importInfoMessage, "Import new topics", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(window, importInfoMessage, "Import new topics",
+                    JOptionPane.INFORMATION_MESSAGE);
             if (RankLists.importFiles(window)) {
-                JOptionPane.showMessageDialog(window, importSuccessMessage, "Topic imported", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(window, importSuccessMessage, "Topic imported",
+                        JOptionPane.INFORMATION_MESSAGE);
             }
-        
+
         } else if (command == "menu") {
 
             JPopupMenu popupMenu = new StartWindow().setSidebarMenu(window);
             popupMenu.setName("popupmenu");
-            
+
             // Get the menu button lower left corner coordinates for the sidebar menu
             JButton button = (JButton) e.getSource();
             Dimension buttonSize = button.getSize();
@@ -94,15 +95,13 @@ public class MyButtonActions implements ActionListener {
             popupMenu.setPreferredSize(new Dimension((window.getSize().width / 6 - 2), 478));
             popupMenu.show(button, 0, y);
 
-            
-
         } else if (command.startsWith("new")) {
 
             if (command == "new") {
 
                 // ask for confirmation
                 new RankLists().startNewRank(window);
-                
+
             } else if (command == "newconfirm") {
 
                 // user has confirmed to select new topic
@@ -110,24 +109,25 @@ public class MyButtonActions implements ActionListener {
                 Component source = (Component) e.getSource();
                 JDialog dialog = (JDialog) SwingUtilities.getWindowAncestor(source);
                 dialog.dispose();
-                
+
                 RankLists.clearRankingResults(window); // clear the ranking results
                 new StartWindow().updateRows(window, null);
                 JDialog topicSelection = new RankLists().selectTopic(this.window);
                 topicSelection.setName("selection");
                 topicSelection.setVisible(true);
             }
-            
+
         } else if (command.startsWith("open")) {
             Component openedShot = new Screenshots().openScreenshot(window, command);
             openedShot.setVisible(true);
 
         } else if (command == "rank") {
-            
+
             // clean the screen before start
             RankLists.clearRankingResults(window);
             if (category == null || category.isEmpty()) {
-                JDialog splash = new StartWindow().setDialogueWindow(window, "<html>No topic selected.<br>Please select a topic.</html>", null, null, 2);
+                JDialog splash = new StartWindow().setDialogueWindow(window,
+                        "<html>No topic selected.<br>Please select a topic.</html>", null, null, 2);
                 splash.setVisible(true);
             }
 
@@ -136,7 +136,6 @@ public class MyButtonActions implements ActionListener {
                 JDialog rankWindow = new RankLists().rankPictures(window, category);
                 rankWindow.setVisible(true);
             }
-
 
         } else if (command == "screenshot") {
             // 'screenshot' pressed
@@ -147,13 +146,13 @@ public class MyButtonActions implements ActionListener {
             screenshots.setName("screenshots");
             screenshots.show(window.getComponentAt(0, 0), window.getSize().width / 6 + 4, 119);
 
-        }  else {
+        } else {
             System.out.println("Unimplemented method " + command);
-        }                
+        }
     }
 
     public static void setListname(String listName) {
         Screenshots.filename = listName;
     }
-    
+
 }

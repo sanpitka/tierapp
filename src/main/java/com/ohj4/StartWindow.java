@@ -41,7 +41,7 @@ public class StartWindow implements Runnable {
     JFrame window;
     static JLabel categoryLabel;
     private static JSONArray selectionChoices = new JSONArray();
-    public static JPanel rowPanel = (JPanel)setRows();
+    public static JPanel rowPanel = (JPanel) setRows();
 
     @Override
     public void run() {
@@ -71,26 +71,27 @@ public class StartWindow implements Runnable {
     /**
      * Sets the rank letters on the main screen and in the ranking window.
      * 
-     * @params isVertical {@code true} if panel should be vertical, {@code false} if the panel should be horizontal
+     * @params isVertical {@code true} if panel should be vertical, {@code false} if
+     *         the panel should be horizontal
      */
     private Component setWestPanel(boolean isVertical) {
 
         JPanel westPanel = new JPanel();
-        
+
         if (isVertical) {
-            westPanel.setLayout(new GridLayout(7,1));
-            westPanel.setPreferredSize(new Dimension(130,600));
+            westPanel.setLayout(new GridLayout(7, 1));
+            westPanel.setPreferredSize(new Dimension(130, 600));
         }
         if (!isVertical) {
-            westPanel.setLayout(new GridLayout(1,7));
+            westPanel.setLayout(new GridLayout(1, 7));
         }
-        
+
         westPanel.setBackground(new Color(184, 184, 184));
 
-        Color labelRed = new Color(220,40,40);
+        Color labelRed = new Color(220, 40, 40);
         westPanel.add(createNewLabel("S", labelRed));
 
-        Color buttonOrange = new Color(191,93,22);
+        Color buttonOrange = new Color(191, 93, 22);
         westPanel.add(createNewLabel("A", buttonOrange));
 
         Color buttonYellow = new Color(190, 179, 77);
@@ -99,7 +100,7 @@ public class StartWindow implements Runnable {
         Color buttonGreen = new Color(125, 142, 114);
         westPanel.add(createNewLabel("C", buttonGreen));
 
-        Color buttonTurquoise = new Color(113,156,161);
+        Color buttonTurquoise = new Color(113, 156, 161);
         westPanel.add(createNewLabel("D", buttonTurquoise));
 
         Color buttonBlue = new Color(115, 130, 168);
@@ -123,36 +124,41 @@ public class StartWindow implements Runnable {
 
         JButton menubutton = new MyButtons(window).setNorthButton("Menu", Color.BLACK, "menu");
         northPanelLeft.add(menubutton);
-        
+
         JButton gorankbutton = new MyButtons(window).setNorthButton("Go Rank!", buttonPink, "rank");
         northPanelLeft.add(gorankbutton);
 
         northPanel.add(northPanelLeft);
 
-         //Sets the list name, lets user change the name
-         JTextField listNameField = new JTextField("Unnamed tier list...");
-         listNameField.getDocument().addDocumentListener(new DocumentListener() {
-             public void insertUpdate(DocumentEvent e) {
-                 String listName = listNameField.getText();
-                 MyButtonActions.setListname(listName);
-             }
-             public void removeUpdate(DocumentEvent e) {}
-             public void changedUpdate(DocumentEvent e) {}
-         });
-         listNameField.setName("listname");
-         Font listNameFont = new Font(listNameField.getFont().getName(),listNameField.getFont().getStyle(),20);
-         listNameField.setBorder(BorderFactory.createEmptyBorder(0,20, 0, 20));
-         listNameField.setFont(listNameFont);
-         northPanel.add(listNameField);
+        // Sets the list name, lets user change the name
+        JTextField listNameField = new JTextField("Unnamed tier list...");
+        listNameField.getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) {
+                String listName = listNameField.getText();
+                MyButtonActions.setListname(listName);
+            }
 
-        JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>Take<br>Screenshot</html>", Color.BLACK, "screenshot");
+            public void removeUpdate(DocumentEvent e) {
+            }
+
+            public void changedUpdate(DocumentEvent e) {
+            }
+        });
+        listNameField.setName("listname");
+        Font listNameFont = new Font(listNameField.getFont().getName(), listNameField.getFont().getStyle(), 20);
+        listNameField.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        listNameField.setFont(listNameFont);
+        northPanel.add(listNameField);
+
+        JButton screenshotbutton = new MyButtons(window).setNorthButton("<html>Take<br>Screenshot</html>", Color.BLACK,
+                "screenshot");
         northPanelRight.add(screenshotbutton);
-        
+
         categoryLabel = new JLabel();
         northPanelRight.add(categoryLabel);
 
         northPanel.add(northPanelRight);
-        
+
         return northPanel;
     }
 
@@ -162,35 +168,38 @@ public class StartWindow implements Runnable {
     private static Component setRows() {
 
         JPanel rows = new JPanel();
-        //rows.setPreferredSize(new Dimension(570, 600));
-        rows.setLayout(new GridLayout(7,1));
+        // rows.setPreferredSize(new Dimension(570, 600));
+        rows.setLayout(new GridLayout(7, 1));
         rows.setBackground(new Color(184, 184, 184));
 
         Color lightGray = new Color(217, 217, 217);
         Color darkGray = new Color(184, 184, 184);
 
-        String[] rowCounter = {"S", "A", "B", "C", "D", "E", "F"};
+        String[] rowCounter = { "S", "A", "B", "C", "D", "E", "F" };
 
-        for (int i=0; i < rowCounter.length; i++) {
+        for (int i = 0; i < rowCounter.length; i++) {
             JPanel newRow = new JPanel();
             newRow.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 0));
             newRow.setBackground(i % 2 == 0 ? lightGray : darkGray);
-            newRow.setName(rowCounter[i]);           
+            newRow.setName(rowCounter[i]);
             rows.add(newRow);
 
         }
 
         return rows;
- 
+
     }
 
     /**
-     * This function updates the rows of a JFrame with images based on the results of a JSON array.
+     * This function updates the rows of a JFrame with images based on the results
+     * of a JSON array.
      * 
-     * @param owner A JFrame object that represents the parent frame of the GUI component where the
-     * rows will be updated.
-     * @param results A JSONArray containing the results of a ranking process, with each element being
-     * a JSONObject representing an image and its rank.
+     * @param owner   A JFrame object that represents the parent frame of the GUI
+     *                component where the
+     *                rows will be updated.
+     * @param results A JSONArray containing the results of a ranking process, with
+     *                each element being
+     *                a JSONObject representing an image and its rank.
      */
     public void updateRows(JFrame owner, JSONArray results) {
 
@@ -198,11 +207,11 @@ public class StartWindow implements Runnable {
         if (results != null && results.length() > 0) {
 
             // for each row, collect all the images that go in that row
-            String[] rowCounter = {"S", "A", "B", "C", "D", "E", "F"};
+            String[] rowCounter = { "S", "A", "B", "C", "D", "E", "F" };
 
             for (int row = 0; row < rowCounter.length; row++) {
 
-                JPanel rankRow = (JPanel)findComponentByName(owner, rowCounter[row]); // find the correct rank row
+                JPanel rankRow = (JPanel) findComponentByName(owner, rowCounter[row]); // find the correct rank row
                 int col = 0; // column counter for row cell increment
 
                 // go through the results
@@ -211,15 +220,16 @@ public class StartWindow implements Runnable {
 
                     if (result.has("rank") && result.getString("rank").equalsIgnoreCase(rowCounter[row])) {
                         // result rank matches the row we're in, add picture to row
-                        
+
                         int height = rankRow.getHeight(); // set the image and image label height to the row height
                         ImageIcon imageIcon = new ImageIcon(result.getString("name")); // get the original image
-                        Image image = imageIcon.getImage();  // get the Image object
+                        Image image = imageIcon.getImage(); // get the Image object
 
                         // scale the image
                         ImageIcon scaledIcon = resizePicture(image, height);
                         JLabel imgLabel = new JLabel(scaledIcon);
-                        imgLabel.setSize(new Dimension(scaledIcon.getIconWidth(), height)); // force the JLabel size to the same as the image
+                        imgLabel.setSize(new Dimension(scaledIcon.getIconWidth(), height)); // force the JLabel size to
+                                                                                            // the same as the image
 
                         // add the image to row, column depending on how many pictures there already are
                         rankRow.add(imgLabel, col++);
@@ -231,10 +241,8 @@ public class StartWindow implements Runnable {
 
             }
 
-      
-        } 
+        }
     }
-
 
     /**
      * Sets the ranking labels in the left-most panel
@@ -244,12 +252,12 @@ public class StartWindow implements Runnable {
         JLabel newLabel = new JLabel(label, SwingConstants.CENTER);
         Font labelFont = new Font("Arial", Font.PLAIN, 40);
         newLabel.setForeground(Color.WHITE);
-        newPanel.setBorder(BorderFactory.createEmptyBorder(7,20,20,20));
+        newPanel.setBorder(BorderFactory.createEmptyBorder(7, 20, 20, 20));
         newLabel.setFont(labelFont);
         newPanel.add(newLabel);
         newPanel.setBackground(backgroundColor);
         return newPanel;
-    }    
+    }
 
     /**
      * Sets the sidebar menu
@@ -276,24 +284,42 @@ public class StartWindow implements Runnable {
     }
 
     /**
-     * Sets a centered dialog window with no title bar. If no buttons are given, the window closes
+     * Sets a centered dialog window with no title bar. If no buttons are given, the
+     * window closes
      * after {@code timeout} seconds. Maximum 5 buttons.
      * <p>
      * <h4>Examples:</h4>
      * Create a 2-button window:
-     * <pre><code>setDialogueWindow(mainScreen, "This is a 2 button window!", {"OK", "Cancel"}, {"ok", "cancel"}, 0)</code></pre>
-     * Create a splash window that disappears after 5 seconds:
-     * <pre><code>setDialogueWindow(mainScreenLowerSection, "This is a splash window!", null, null, 5)</code></pre>
-     * @param dialogOwner the component that sets the relative center position of the window. The program screen is recommended.
-     *                    {@code null} centers the window in the middle of computer screen.
-     * @param dialogText the text to show on the dialog window
-     * @param buttonLabels a String array of labels to show on the buttons. {@code buttonLabels} and {@code buttonActions} must be the same size.
-     * @param buttonActions a String array of actions for each button. {@code buttonLabels} and {@code buttonActions} must be the same size.
-     * @param timeout the time, after which the window disappears. Must be {@code 0} if any buttons are set. Max 10 seconds.
      * 
-     * @return the set window component, {@code null} if parameters are incorrect or there are too many buttons
+     * <pre>
+     * <code>setDialogueWindow(mainScreen, "This is a 2 button window!", {"OK", "Cancel"}, {"ok", "cancel"}, 0)</code>
+     * </pre>
+     * 
+     * Create a splash window that disappears after 5 seconds:
+     * 
+     * <pre>
+     * <code>setDialogueWindow(mainScreenLowerSection, "This is a splash window!", null, null, 5)</code>
+     * </pre>
+     * 
+     * @param dialogOwner   the component that sets the relative center position of
+     *                      the window. The program screen is recommended.
+     *                      {@code null} centers the window in the middle of
+     *                      computer screen.
+     * @param dialogText    the text to show on the dialog window
+     * @param buttonLabels  a String array of labels to show on the buttons.
+     *                      {@code buttonLabels} and {@code buttonActions} must be
+     *                      the same size.
+     * @param buttonActions a String array of actions for each button.
+     *                      {@code buttonLabels} and {@code buttonActions} must be
+     *                      the same size.
+     * @param timeout       the time, after which the window disappears. Must be
+     *                      {@code 0} if any buttons are set. Max 10 seconds.
+     * 
+     * @return the set window component, {@code null} if parameters are incorrect or
+     *         there are too many buttons
      */
-    public JDialog setDialogueWindow(Component dialogOwner, String dialogText, String[] buttonLabels, String[] buttonActions, int timeout) {
+    public JDialog setDialogueWindow(Component dialogOwner, String dialogText, String[] buttonLabels,
+            String[] buttonActions, int timeout) {
 
         JDialog dialogWindow = new JDialog();
         dialogWindow.setUndecorated(true); // remove title bar
@@ -306,15 +332,18 @@ public class StartWindow implements Runnable {
         dialogWindow.setForeground(Color.BLACK);
         dialogWindow.getRootPane().setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         dialogWindow.setLocationRelativeTo(dialogOwner);
-        dialogWindow.setModal(true); // set that user can't interact with other components on the screen while the dialog is open
+        dialogWindow.setModal(true); // set that user can't interact with other components on the screen while the
+                                     // dialog is open
 
         // set window text
         JLabel windowtext = new JLabel(dialogText, SwingConstants.CENTER);
         windowtext.setFont(new Font("Arial", Font.PLAIN, 20));
         dialogWindow.add(windowtext);
 
-        // window with buttons and no timeout. must have equal amount of labels and actions and 0 timeout
-        if (buttonLabels != null && buttonActions != null && buttonLabels.length > 0 && buttonLabels.length == buttonActions.length && timeout == 0) {
+        // window with buttons and no timeout. must have equal amount of labels and
+        // actions and 0 timeout
+        if (buttonLabels != null && buttonActions != null && buttonLabels.length > 0
+                && buttonLabels.length == buttonActions.length && timeout == 0) {
 
             // check that there are not too many buttons
             if (buttonLabels.length > 5) {
@@ -332,17 +361,18 @@ public class StartWindow implements Runnable {
             buttonPanel.setBackground(Color.LIGHT_GRAY);
 
             for (int i = 0; i < buttonLabels.length; i++) {
-                
-                buttonPanel.add(new MyButtons((JFrame)dialogOwner).setDialogButton(buttonLabels[i], buttonActions[i]));
+
+                buttonPanel.add(new MyButtons((JFrame) dialogOwner).setDialogButton(buttonLabels[i], buttonActions[i]));
 
             }
-            
+
             dialogWindow.add(buttonPanel);
 
-        } 
-        
+        }
+
         // window with no buttons and timeout. must have no buttons and 10 > timeout > 0
-        else if ((buttonLabels == null || buttonLabels.length == 0) && (buttonActions == null || buttonActions.length == 0) && timeout > 0) {
+        else if ((buttonLabels == null || buttonLabels.length == 0)
+                && (buttonActions == null || buttonActions.length == 0) && timeout > 0) {
 
             // don't allow too long timeout
             if (timeout > 10) {
@@ -359,7 +389,7 @@ public class StartWindow implements Runnable {
                     // Cancel the Timer
                     timer.cancel();
                 }
-            }, (long)timeout * 1000);
+            }, (long) timeout * 1000);
 
         } else {
 
@@ -383,14 +413,18 @@ public class StartWindow implements Runnable {
     /**
      * Search for components inside the screen.
      * 
-     * @param container A Container object that represents the container in which the component is
-     * located. A Container is a component that can contain other components, such as a JFrame, JPanel,
-     * or JDialog.
-     * @param componentName The name of the component that we want to find within the given container.
-     * @return the component or nested component, or null if the component is not found
+     * @param container     A Container object that represents the container in
+     *                      which the component is
+     *                      located. A Container is a component that can contain
+     *                      other components, such as a JFrame, JPanel,
+     *                      or JDialog.
+     * @param componentName The name of the component that we want to find within
+     *                      the given container.
+     * @return the component or nested component, or null if the component is not
+     *         found
      */
     public Component findComponentByName(Container container, String componentName) {
-        
+
         Component[] components = container.getComponents();
 
         for (Component component : components) {
@@ -412,14 +446,16 @@ public class StartWindow implements Runnable {
     }
 
     /**
-     * This Java function changes the category label's icon based on the given category name.
+     * This Java function changes the category label's icon based on the given
+     * category name.
      * 
-     * @param categoryName A String representing the name of the category for which the image needs to
-     * be set.
+     * @param categoryName A String representing the name of the category for which
+     *                     the image needs to
+     *                     be set.
      * @return A `JLabel` object is being returned.
      */
     public JLabel changeCategory(String categoryName) {
-        
+
         File image = new RankLists().setTopicImage(categoryName, window);
         try {
             Image img = ImageIO.read(image);
@@ -427,52 +463,53 @@ public class StartWindow implements Runnable {
             ImageIcon icon = new ImageIcon(smallerImg);
             categoryLabel.setIcon(icon);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(window, "An I/O error occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(window, "An I/O error occurred: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        return categoryLabel;  
+        return categoryLabel;
     }
 
     /**
-     * This function creates a JPopupMenu that displays a manual for the Tier List App.
+     * This function creates a JPopupMenu that displays a manual for the Tier List
+     * App.
      * 
      * @param dialogOwner The JFrame that owns the JPopupMenu.
      * @return A JPopupMenu containing a manual for the Tier List App.
      */
     public JPopupMenu showManual(JFrame dialogOwner) {
         String manual = "<html><h1>Tier List App manual</h1>" +
-        "<br>Tier List App is an easy-to-use tier list maker that allows you to " +
-        "rank various subjects <br>in tier lists from the best to the worst. Take " +
-        "a screenshot from your tierlist to save it <br>and show it to your friends!" +
-        "<br>" + 
-        "<br>Tiers" +
-        "<br>S - Superb" +
-        "<br>A - 2nd best grade" +
-        "<br>..." +
-        "<br>F - worst grade" +
-        "<br>" +
-        "<br><h2>Ranking</h2>" +
-        "Choose a new topic by clicking the New button in Menu. If there are no topics," +
-        "you can <br>import some by clicking Import Files in Menu. Choose a topic and click " +
-        "the Go rank <br>button. Rank items by clicking the grade you want. If you want to " +
-        "return to the previous <br>item, click undo. You can also skip an item if you like." +
-        "<br>When the ranking is finished, you are able to take a look at the tier list in visual form. " +
-        "<br>You take a screenshot of your tier list by clicking the Take Screenshot button. Give a " +
-        "<br>name to your tier list by replacing the 'Unnamed tier list' text with a name that " +
-        "<br>describes your tier list." +
-        "<br><h2>Adding topics</h2>" +
-        "To add a new topic, choose some images of the category " + 
-        "you would like to rank and <br>save them into one folder. The " +
-        "allowed formats are JPG, JPEG and PNG. If " +
-        "you <br>would like to have a theme image for your category, " +
-        "name it according to your folder. <br>For example the theme image " +
-        "of folder Folder should be named to Folder.jpg or <br>Folder.png." +
-        "<br>You can import your images into Tier List App by clicking Import " +
-        "Files button in Menu <br>and choosing the folder you would like to import." +
-        "<br><h2>Handling screenshots</h2>" +
-        "You can have a look at your screenshots and delete them by clicking Screenshots " +
-        "<br>button in Menu. If you want to share your screenshots to your friends or to " +
-        "<br>social media, you'll find them in the Screenshots folder of this app.";
-        
+                "<br>Tier List App is an easy-to-use tier list maker that allows you to " +
+                "rank various subjects <br>in tier lists from the best to the worst. Take " +
+                "a screenshot from your tierlist to save it <br>and show it to your friends!" +
+                "<br>" +
+                "<br>Tiers" +
+                "<br>S - Superb" +
+                "<br>A - 2nd best grade" +
+                "<br>..." +
+                "<br>F - worst grade" +
+                "<br>" +
+                "<br><h2>Ranking</h2>" +
+                "Choose a new topic by clicking the New button in Menu. If there are no topics," +
+                "you can <br>import some by clicking Import Files in Menu. Choose a topic and click " +
+                "the Go rank <br>button. Rank items by clicking the grade you want. If you want to " +
+                "return to the previous <br>item, click undo. You can also skip an item if you like." +
+                "<br>When the ranking is finished, you are able to take a look at the tier list in visual form. " +
+                "<br>You take a screenshot of your tier list by clicking the Take Screenshot button. Give a " +
+                "<br>name to your tier list by replacing the 'Unnamed tier list' text with a name that " +
+                "<br>describes your tier list." +
+                "<br><h2>Adding topics</h2>" +
+                "To add a new topic, choose some images of the category " +
+                "you would like to rank and <br>save them into one folder. The " +
+                "allowed formats are JPG, JPEG and PNG. If " +
+                "you <br>would like to have a theme image for your category, " +
+                "name it according to your folder. <br>For example the theme image " +
+                "of folder Folder should be named to Folder.jpg or <br>Folder.png." +
+                "<br>You can import your images into Tier List App by clicking Import " +
+                "Files button in Menu <br>and choosing the folder you would like to import." +
+                "<br><h2>Handling screenshots</h2>" +
+                "You can have a look at your screenshots and delete them by clicking Screenshots " +
+                "<br>button in Menu. If you want to share your screenshots to your friends or to " +
+                "<br>social media, you'll find them in the Screenshots folder of this app.";
 
         int width = dialogOwner.getSize().width / 6 * 5 - 9;
         int height = 474;
@@ -492,28 +529,29 @@ public class StartWindow implements Runnable {
         scrollPane.setBackground(Color.LIGHT_GRAY);
         scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-
         aboutApp.add(scrollPane);
         return aboutApp;
     }
 
     /**
-     * This function resizes an image to a specified height while maintaining its aspect ratio.
+     * This function resizes an image to a specified height while maintaining its
+     * aspect ratio.
      * 
-     * @param targetImage The image that needs to be resized.
+     * @param targetImage  The image that needs to be resized.
      * @param targetHeight The desired height of the resized image.
-     * @return The method is returning an ImageIcon object that contains the scaled image.
+     * @return The method is returning an ImageIcon object that contains the scaled
+     *         image.
      */
     public ImageIcon resizePicture(Image targetImage, int targetHeight) {
 
-        double aspectRatio = (double)targetImage.getWidth(null) / (double)targetImage.getHeight(null);
-        
+        double aspectRatio = (double) targetImage.getWidth(null) / (double) targetImage.getHeight(null);
+
         // calculate the target width based on the aspect ratio
-        int targetWidth = (int)(targetHeight*aspectRatio);
+        int targetWidth = (int) (targetHeight * aspectRatio);
 
         Image scaledImage = targetImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_DEFAULT);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
-        
+
         return scaledIcon;
     }
 

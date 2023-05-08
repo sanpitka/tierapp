@@ -10,11 +10,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 /**
- * The MyButtons class creates a JButton with customized properties and adds an ActionListener to it.
+ * The MyButtons class creates a JButton with customized properties and adds an
+ * ActionListener to it.
  */
 public class MyButtons extends JPanel {
 
-    JFrame window;    
+    JFrame window;
+
     public MyButtons(JFrame window) {
         this.window = window;
     }
@@ -56,9 +58,8 @@ public class MyButtons extends JPanel {
         newButton.setForeground(Color.BLACK);
         newButton.setFocusPainted(false);
         newButton.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK),
-            BorderFactory.createEmptyBorder(5,10,5,10)
-        ));
+                BorderFactory.createLineBorder(Color.BLACK),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
         newButton.setActionCommand(buttonAction);
         newButton.addActionListener(new MyButtonActions(this.window));
 
@@ -73,9 +74,8 @@ public class MyButtons extends JPanel {
         newButton.setForeground(Color.BLACK);
         newButton.setFocusPainted(false);
         newButton.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(Color.BLACK),
-            BorderFactory.createEmptyBorder(5,10,5,10)
-        ));
+                BorderFactory.createLineBorder(Color.BLACK),
+                BorderFactory.createEmptyBorder(5, 10, 5, 10)));
 
         return newButton;
     }
