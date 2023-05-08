@@ -436,6 +436,9 @@ public class RankLists {
                             undo.setEnabled(false);
                         }
 
+                        rankingResults.remove(index);
+                        System.out.println(rankingResults);
+
                         if (index < topicArray.length()) {
                             // create new picture and add it to the rankWindow
                             String filename = topicArray.getJSONObject(index).getString("name");
@@ -463,8 +466,8 @@ public class RankLists {
                 @Override
                 public void actionPerformed(ActionEvent s) {
                     
-                    JSONObject skipped = topicArray.getJSONObject(index);
-                    topicArray.put(skipped);
+                    //JSONObject skipped = topicArray.getJSONObject(index);
+                    //topicArray.put(skipped);
                     index++;
                     undo.setEnabled(true);
 
