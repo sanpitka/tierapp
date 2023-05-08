@@ -373,7 +373,8 @@ public class RankLists {
         rankWindow.setUndecorated(true); // remove title bar
         rankWindow.setName("rankwindow");
         rankWindow.setModal(true); // don't allow interaction besides the ranking
-        // TODO Note: by setting this to modal, the use of menu button when ranking is disabled. If it's not set to modal, the ranking window will not close if the user presses menu and selects new ranking topic
+        // Note: by setting this to modal, the use of menu button when ranking is disabled. 
+        // If it's not set to modal, the ranking window will not close if the user presses menu and selects new ranking topic
 
         if (topicArray != null && topicArray.length() > 0) {
 
@@ -437,7 +438,6 @@ public class RankLists {
                         }
 
                         rankingResults.remove(index);
-                        System.out.println(rankingResults);
 
                         if (index < topicArray.length()) {
                             // create new picture and add it to the rankWindow
@@ -466,8 +466,6 @@ public class RankLists {
                 @Override
                 public void actionPerformed(ActionEvent s) {
                     
-                    //JSONObject skipped = topicArray.getJSONObject(index);
-                    //topicArray.put(skipped);
                     index++;
                     undo.setEnabled(true);
 
@@ -488,7 +486,21 @@ public class RankLists {
                         rankWindow.revalidate();
                         rankWindow.repaint();
                     
-                    } 
+                    } else {
+                        // end of ranking, close rankWindow
+                        index = 0;
+                        rankWindow.dispose();
+
+                        // show splash screen to tell user that ranking ended
+                        JDialog ended = new StartWindow().setDialogueWindow(dialogOwner, "Ranking ended!", null, null, 2);
+                        ended.setVisible(true);
+                        try {
+                            new StartWindow().updateRows(dialogOwner, rankingResults);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        
+                    }
                 }
             });
             lowerbuttons.add(undo);
@@ -507,9 +519,7 @@ public class RankLists {
                         // record ranking for current picture
                         String ranking = ((JButton) b.getSource()).getText();
                         topicArray.getJSONObject(index).put("rank", ranking);
-                        System.out.println(topicArray);
                         rankingResults.put(topicArray.getJSONObject(index));
-                        System.out.println(rankingResults);
                         
                         // move to next picture
                         index++;
@@ -555,7 +565,7 @@ public class RankLists {
             } else {
                 // topic has no pictures to rank
                 String emptyFolderMessage = "<html>No pictures to rank!<br>Import more pictures or choose another topic</html>";
-                JOptionPane.showMessageDialog(dialogOwner, emptyFolderMessage, "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(dialogOwner, emptyFolderMessage, "Empty folder", JOptionPane.ERROR_MESSAGE);
                 rankWindow.setModal(false);
                 
                 rankWindow.dispose();
