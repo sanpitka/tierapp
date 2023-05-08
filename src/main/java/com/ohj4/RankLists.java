@@ -433,9 +433,13 @@ public class RankLists {
             JPanel lowerbuttons = new JPanel();
             lowerbuttons.setBackground(Color.LIGHT_GRAY);
             JButton undo = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Undo");
+            JButton skip = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Skip");
             // don't let undo, if the ranking has just started
             if (index == 0) {
                 undo.setEnabled(false);
+            }
+            if (index == topicArray.length() - 1) {
+                skip.setEnabled(false);
             }
             undo.addActionListener(new ActionListener() {
                 @Override
@@ -451,7 +455,6 @@ public class RankLists {
                 }
             });
 
-            JButton skip = new MyButtons(dialogOwner).setDialogButtonWithoutAction("Skip");
             skip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent s) {
@@ -471,6 +474,9 @@ public class RankLists {
                         last.put(key, currentValue);
                     }
                     showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
+                    if (index == topicArray.length() - 1) {
+                        skip.setEnabled(false);
+                    }
                 }
             });
 
@@ -497,6 +503,9 @@ public class RankLists {
                         index++;
                         undo.setEnabled(true);
                         showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
+                        if (index == topicArray.length() - 1) {
+                            skip.setEnabled(false);
+                        }
 
                     }
                 });
