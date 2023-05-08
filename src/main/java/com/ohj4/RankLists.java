@@ -1,13 +1,6 @@
 package com.ohj4;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -15,21 +8,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -473,8 +455,21 @@ public class RankLists {
             skip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent s) {
-                    index++;
-                    undo.setEnabled(true);
+                        int lastIndex = topicArray.length() - 1;
+
+                    JSONObject current = topicArray.getJSONObject(index);
+                    JSONObject last = topicArray.getJSONObject(lastIndex - 1);
+                
+                    JSONArray keys = current.names();
+                
+                    for (int i = 0; i < keys.length(); i++) {
+                        String key = keys.getString(i);
+                        Object currentValue = current.get(key);
+                        Object lastValue = last.get(key);
+                
+                        current.put(key, lastValue);
+                        last.put(key, currentValue);
+                    }
                     showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
                 }
             });
@@ -671,5 +666,4 @@ public class RankLists {
 
         return labels;
     }
-
 }
