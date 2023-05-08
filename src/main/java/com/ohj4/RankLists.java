@@ -436,27 +436,8 @@ public class RankLists {
                         if (index == 0) {
                             undo.setEnabled(false);
                         }
-
                         rankingResults.remove(index);
-
-                        if (index < topicArray.length()) {
-                            // create new picture and add it to the rankWindow
-                            String filename = topicArray.getJSONObject(index).getString("name");
-                            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-                            Image currentImage = currentPicture.getImage();
-
-                            // scale the picture to be at max 50% of the window
-                            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
-
-                            pictureLabel.setIcon(scaledIcon);
-                            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
-                            pictureLabel.validate();
-                            pictureLabel.repaint();
-                            
-                            rankWindow.revalidate();
-                            rankWindow.repaint();
-                        
-                        }
+                        showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
                     }
                 }
             });
@@ -465,42 +446,9 @@ public class RankLists {
             skip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent s) {
-                    
                     index++;
                     undo.setEnabled(true);
-
-                    if (index < topicArray.length()) {
-                        // create new picture and add it to the rankWindow
-                        String filename = topicArray.getJSONObject(index).getString("name");
-                        ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-                        Image currentImage = currentPicture.getImage();
-
-                        // scale the picture to be at max 50% of the window
-                        ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
-
-                        pictureLabel.setIcon(scaledIcon);
-                        pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
-                        pictureLabel.validate();
-                        pictureLabel.repaint();
-                        
-                        rankWindow.revalidate();
-                        rankWindow.repaint();
-                    
-                    } else {
-                        // end of ranking, close rankWindow
-                        index = 0;
-                        rankWindow.dispose();
-
-                        // show splash screen to tell user that ranking ended
-                        JDialog ended = new StartWindow().setDialogueWindow(dialogOwner, "Ranking ended!", null, null, 2);
-                        ended.setVisible(true);
-                        try {
-                            new StartWindow().updateRows(dialogOwner, rankingResults);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        
-                    }
+                    showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
                 }
             });
             lowerbuttons.add(undo);
@@ -524,39 +472,8 @@ public class RankLists {
                         // move to next picture
                         index++;
                         undo.setEnabled(true);
+                        showNextImage(topicArray, scaleHeight, rankWindow, dialogOwner);
 
-                        if (index < topicArray.length()) {
-                            // create new picture and add it to the rankWindow
-                            String filename = topicArray.getJSONObject(index).getString("name");
-                            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
-                            Image currentImage = currentPicture.getImage();
-
-                            // scale the picture to be at max 50% of the window
-                            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
-
-                            pictureLabel.setIcon(scaledIcon);
-                            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
-                            pictureLabel.validate();
-                            pictureLabel.repaint();
-                            
-                            rankWindow.revalidate();
-                            rankWindow.repaint();
-                        
-                        } else {
-                            // end of ranking, close rankWindow
-                            index = 0;
-                            rankWindow.dispose();
-
-                            // show splash screen to tell user that ranking ended
-                            JDialog ended = new StartWindow().setDialogueWindow(dialogOwner, "Ranking ended!", null, null, 2);
-                            ended.setVisible(true);
-                            try {
-                                new StartWindow().updateRows(dialogOwner, rankingResults);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            
-                        }
                     }
                 });
                 
@@ -574,6 +491,42 @@ public class RankLists {
         
         return rankWindow;
         
+    }
+
+    private void showNextImage(JSONArray topicArray, int scaleHeight, JDialog rankWindow, JFrame dialogOwner) {
+        
+        if (index < topicArray.length()) {
+            // create new picture and add it to the rankWindow
+            String filename = topicArray.getJSONObject(index).getString("name");
+            ImageIcon currentPicture = new ImageIcon(displayPicture(filename));
+            Image currentImage = currentPicture.getImage();
+
+            // scale the picture to be at max 50% of the window
+            ImageIcon scaledIcon = new StartWindow().resizePicture(currentImage, scaleHeight);
+
+            pictureLabel.setIcon(scaledIcon);
+            pictureLabel.setSize(scaledIcon.getIconWidth(), scaledIcon.getIconHeight());
+            pictureLabel.validate();
+            pictureLabel.repaint();
+            
+            rankWindow.revalidate();
+            rankWindow.repaint();
+        
+        } else {
+            // end of ranking, close rankWindow
+            index = 0;
+            rankWindow.dispose();
+
+            // show splash screen to tell user that ranking ended
+            JDialog ended = new StartWindow().setDialogueWindow(dialogOwner, "Ranking ended!", null, null, 2);
+            ended.setVisible(true);
+            try {
+                new StartWindow().updateRows(dialogOwner, rankingResults);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+        }
     }
 
     /**
