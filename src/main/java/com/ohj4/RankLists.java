@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -375,6 +376,9 @@ public class RankLists {
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
+        System.out.println("Ennen sekoitusta: " + topicArray);
+        Collections.shuffle(topicArray.toList());
+        System.out.println("Sekoituksen jälkeen: " + topicArray);
 
         JDialog rankWindow = new JDialog();
         rankWindow.setUndecorated(true); // remove title bar
@@ -449,6 +453,7 @@ public class RankLists {
                         if (index == 0) {
                             undo.setEnabled(false);
                         }
+                        skip.setEnabled(true);
                         rankingResults.remove(index);
                         showNextItem(topicArray, scaleHeight, rankWindow, dialogOwner);
                     }
@@ -461,7 +466,7 @@ public class RankLists {
                         int lastIndex = topicArray.length() - 1;
 
                     JSONObject current = topicArray.getJSONObject(index);
-                    JSONObject last = topicArray.getJSONObject(lastIndex - 1);
+                    JSONObject last = topicArray.getJSONObject(lastIndex);
                 
                     JSONArray keys = current.names();
                 
