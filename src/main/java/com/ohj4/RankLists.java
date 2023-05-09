@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Collections;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -377,7 +377,15 @@ public class RankLists {
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
         System.out.println("Ennen sekoitusta: " + topicArray);
-        Collections.shuffle(topicArray.toList());
+        //Shuffle the topic array using Fisher-Yates shuffle method
+        Random random = new Random();
+            for (int i = topicArray.length() - 1; i >= 0; i--)
+            {
+              int j = random.nextInt(i + 1);
+              Object object = topicArray.get(j);
+              topicArray.put(j, topicArray.get(i));
+              topicArray.put(i, object);
+            }
         System.out.println("Sekoituksen jälkeen: " + topicArray);
 
         JDialog rankWindow = new JDialog();
@@ -680,4 +688,5 @@ public class RankLists {
 
         return labels;
     }
+
 }
