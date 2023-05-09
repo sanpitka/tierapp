@@ -376,17 +376,15 @@ public class RankLists {
 
         // get selected topic folder content
         JSONArray topicArray = getRankingTopic(topicPath);
-        System.out.println("Ennen sekoitusta: " + topicArray);
-        //Shuffle the topic array using Fisher-Yates shuffle method
+
+        // Shuffle the topic array using Fisher-Yates shuffle method
         Random random = new Random();
-            for (int i = topicArray.length() - 1; i >= 0; i--)
-            {
-              int j = random.nextInt(i + 1);
-              Object object = topicArray.get(j);
-              topicArray.put(j, topicArray.get(i));
-              topicArray.put(i, object);
-            }
-        System.out.println("Sekoituksen jälkeen: " + topicArray);
+        for (int i = topicArray.length() - 1; i >= 0; i--) {
+            int j = random.nextInt(i + 1);
+            Object object = topicArray.get(j);
+            topicArray.put(j, topicArray.get(i));
+            topicArray.put(i, object);
+        }
 
         JDialog rankWindow = new JDialog();
         rankWindow.setUndecorated(true); // remove title bar
@@ -471,18 +469,18 @@ public class RankLists {
             skip.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent s) {
-                        int lastIndex = topicArray.length() - 1;
+                    int lastIndex = topicArray.length() - 1;
 
                     JSONObject current = topicArray.getJSONObject(index);
                     JSONObject last = topicArray.getJSONObject(lastIndex);
-                
+
                     JSONArray keys = current.names();
-                
+
                     for (int i = 0; i < keys.length(); i++) {
                         String key = keys.getString(i);
                         Object currentValue = current.get(key);
                         Object lastValue = last.get(key);
-                
+
                         current.put(key, lastValue);
                         last.put(key, currentValue);
                     }
