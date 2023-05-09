@@ -262,9 +262,9 @@ public class RankLists {
             g2d.setColor(Color.BLACK);
             g2d.drawString(topicName, 5, 45);
             g2d.dispose();
-            imgFile = new File("topics/" + topicName + "/" + imgNameJpg);
+            imgFile = new File("topics/" + topicName + "/" + imgNamePng);
             try {
-                ImageIO.write(newImage, "jpg", imgFile);
+                ImageIO.write(newImage, "png", imgFile);
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(window, "An error occurred: " + e.getMessage(), "Error",
                         JOptionPane.ERROR_MESSAGE);
