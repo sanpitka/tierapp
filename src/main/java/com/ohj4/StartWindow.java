@@ -478,7 +478,7 @@ public class StartWindow implements Runnable {
      */
     public JPopupMenu showManual(JFrame dialogOwner) {
         String manual = "<html><h1>Tier List App manual</h1>" +
-                "<br>Tier List App is an easy-to-use tier list maker that allows you to " +
+                "<br>Tier List Maker is an easy-to-use tier list app that allows you to " +
                 "rank various subjects <br>in tier lists from the best to the worst. Take " +
                 "a screenshot from your tierlist to save it <br>and show it to your friends!" +
                 "<br>" +
