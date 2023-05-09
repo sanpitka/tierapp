@@ -242,9 +242,13 @@ public class RankLists {
     public File setTopicImage(String topicName, JFrame window) {
         String imgNamePng = topicName + ".png";
         String imgNameJpg = topicName + ".jpg";
+        String imgNameJpeg = topicName + ".jpeg";
         File imgFile = new File("topics/" + topicName + "/" + imgNamePng);
         if (!imgFile.exists()) {
             imgFile = new File("topics/" + topicName + "/" + imgNameJpg);
+        }
+        if (!imgFile.exists()) {
+            imgFile = new File("topics/" + topicName + "/" + imgNameJpeg);
         }
         if (!imgFile.exists()) {
             // If there is no topic image, create one.
@@ -318,7 +322,7 @@ public class RankLists {
 
     /**
      * Imports images to topics folder.
-     * Creates a folder for new topic and copies JPG and PNG files there from the
+     * Creates a folder for new topic and copies JPG, JPEG and PNG files there from the
      * source folder.
      * 
      * @param sourceFolder      the folder the user wants to import
