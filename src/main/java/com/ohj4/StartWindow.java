@@ -492,7 +492,7 @@ public class StartWindow implements Runnable {
                 "Choose a new topic by clicking the New button in Menu. If there are no topics," +
                 "you can <br>import some by clicking Import Files in Menu. Choose a topic and click " +
                 "the Go rank <br>button. Rank items by clicking the grade you want. If you want to " +
-                "return to the previous <br>item, click undo. You can also skip an item if you like." +
+                "return to the previous <br>item, click undo. You can also skip an item if you like and rank it later." +
                 "<br>When the ranking is finished, you are able to take a look at the tier list in visual form. " +
                 "<br>You take a screenshot of your tier list by clicking the Take Screenshot button. Give a " +
                 "<br>name to your tier list by replacing the 'Unnamed tier list' text with a name that " +
